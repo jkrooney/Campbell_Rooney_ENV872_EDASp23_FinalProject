@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse, quietly = TRUE)
 library(lubridate)
 
-install.packages('sf')
+#install.packages('sf')
 library(sf)
 install.packages('leaflet')
 library(leaflet)
@@ -88,6 +88,12 @@ ggplot(data=huc8_sf_join) +
 ```{r Read in US Coal Field Data}
 #Read in uploaded data from Spatial data folder
 USCoalFields <- st_read('./Data/Spatial/US_Coal_Fields.shp')
+
+#View using ggplot
+ggplot(data=USCoalFields) + geom_sf()
+
+#View using mapview
+mapview(USCoalFields)
 
 ```
 
