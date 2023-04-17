@@ -9,6 +9,23 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r Install packages, message=FALSE, warning=FALSE}
+#Import the tidyverse library 
+library(tidyverse, quietly = TRUE)
+library(lubridate)
+
+install.packages('sf')
+library(sf)
+install.packages('leaflet')
+library(leaflet)
+install.packages('mapview')
+library(mapview); mapviewOptions(fgb = FALSE)
+
+#Disable on-the-fly projections
+sf::sf_use_s2(FALSE)
+
+```
+
 
 ```{r join.attributes.to.spatial features}
 #Read the 2018 SVI county-level dataset for NC
@@ -66,6 +83,12 @@ ggplot(data=huc8_sf_join) +
     title='Wind energy by HUC 8',
     fill ='MW/year'
   )
+```
+
+```{r Read in US Coal Field Data}
+#Read in uploaded data from Spatial data folder
+USCoalFields <- st_read('./Data/Spatial/US_Coal_Fields.shp')
+
 ```
 
 
