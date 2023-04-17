@@ -69,4 +69,43 @@ ggplot(data=huc8_sf_join) +
 ```
 
 
+### 2.2.4 Reading in GeoJSON data
 
+More and more spatial data are appearing on-line, in a format that allows us to connect directly to the data vs downloading local copies to our workspace. An example is the Homeland Infrstructure Foundation-Level Data (HIFLD) Their open data site (<https://hifld-geoplatform.opendata.arcgis.com/>) has links to many datasets.
+
+When the data is served in GeoJSON format, we can ingest it directly in to R. Follow these steps: - Navigate to <https://hifld-geoplatform.opendata.arcgis.com/> - Scroll down to the Explore Categories area. Select Energy (for example) - Search for power plants. - Select the first return and open its [link](https://bit.ly/3aAVhz3) - Locate the APIs dropdown and copy the link to the GeoJSON option.
+
+If you have difficulty, the link you want is: - <https://opendata.arcgis.com/datasets/ee0263bd105d41599be22d46107341c3_0.geojson>
+
+This a link to a spatial dataset in GeoJSON format. Now let's read this dataset in and explore it:
+
+```{r load.geojson.data}
+powerplants_sf <- st_read('https://opendata.arcgis.com/datasets/ee0263bd105d41599be22d46107341c3_0.geojson')
+
+#Reveal the field names
+colnames(powerplants_sf)
+
+#How many records
+nrow(powerplants_sf)
+
+#View on a map - specify the geometry column to draw faster
+plot(powerplants_sf$geometry)
+
+#Filter for just powerplants found in NC
+nc_powerplants_sf <- powerplants_sf %>% 
+  filter(STATE == "NC") 
+
+#Have a look the variety of types (and number of each)
+nc_powerplants_sf %>% 
+  st_drop_geometry() %>% 
+  count(TYPE, sort=TRUE)
+
+#Most are solar farms; let's remove those
+nc_powerplants_sf <- nc_powerplants_sf %>% 
+  filter(TYPE != "SOLAR PHOTOVOLTAIC")
+
+# Examine counts by fuel type
+ggplot(nc_powerplants_sf) + 
+  geom_sf(aes(color = PRIM_FUEL)) 
+
+```
