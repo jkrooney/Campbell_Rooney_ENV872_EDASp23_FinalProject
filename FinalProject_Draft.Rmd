@@ -85,6 +85,19 @@ ggplot(data=huc8_sf_join) +
   )
 ```
 
+```{r Read in HUC12 watershed data}
+#Read in uploaded data from Spatial Data folder
+HUC12 <- st_read('./Data/Spatial/HUC12_Watershed_Boundaries/NHD_-_Watershed_Boundaries_HUC_12.shp')
+
+#View using ggplot
+ggplot(data=HUC12) + geom_sf()
+
+#View using mapview
+mapview(HUC12)
+
+```
+
+
 ```{r Read in US Coal Field Data}
 #Read in uploaded data from Spatial data folder
 USCoalFields <- st_read('./Data/Spatial/US_Coal_Fields.shp')
