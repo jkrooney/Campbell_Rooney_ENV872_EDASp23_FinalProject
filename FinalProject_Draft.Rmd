@@ -16,9 +16,9 @@ library(lubridate)
 
 #install.packages('sf')
 library(sf)
-install.packages('leaflet')
+#install.packages('leaflet')
 library(leaflet)
-install.packages('mapview')
+#install.packages('mapview')
 library(mapview); mapviewOptions(fgb = FALSE)
 
 #Disable on-the-fly projections
