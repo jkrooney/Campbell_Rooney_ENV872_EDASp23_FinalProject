@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+    <idinfo>
+        <citation>
+            <citeinfo>
+                <title>NHD - Watershed Boundaries HUC 12</title>
+                <onlink>https://services.wygisc.org/HostGIS/rest/services/GeoHub/NHDWatersheds12Digit/MapServer</onlink>
+            </citeinfo>
+        </citation>
+        <descript>
+            <abstract>The Watershed and Subwatershed hydrologic unit boundaries (WSB)provide a uniquely identified and uniform method of subdividing large drainage areas. The smaller sized 6th level sub-watersheds (up to 250,000 acres) are useful for numerous application programs supported by a variety of local, State, and Federal Agencies.</abstract>
+        </descript>
+        <keywords>
+            <theme>
+                <themekt>ISO 19115 Topic Categories</themekt>
+                <themekey>inlandWaters</themekey>
+            </theme>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>boundaries</themekey>
+                <themekey>environment</themekey>
+                <themekey>inland water resources</themekey>
+                <themekey>watershed</themekey>
+                <themekey>Wyoming</themekey>
+                <themekey>Water</themekey>
+                <themekey>Water Resources</themekey>
+                <themekey>Inland Waters</themekey>
+            </theme>
+        </keywords>
+        <accconst>None</accconst>
+        <useconst>None</useconst>
+    </idinfo>
+    <metainfo>
+        <metd>20190807</metd>
+        <metc>
+            <cntinfo>
+                <!--no contact person or organization name available-->
+            </cntinfo>
+        </metc>
+        <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+        <metstdv>FGDC-STD-001-1998</metstdv>
+        <mettc>local time</mettc>
+    </metainfo>
+</metadata>
