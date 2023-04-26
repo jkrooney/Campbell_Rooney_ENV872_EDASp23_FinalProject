@@ -62,8 +62,8 @@ counties_sf_join <- wy_counties %>%
 
 #View with mapview
 mapview(counties_sf_join, 
-        zcol = 'E_POV150', 
-        col.regions = brewer.pal(2, 'RdBu')) #+ 
+        zcol = 'E_POV150')#, 
+        #col.regions = brewer.pal(2, 'RdBu')) #+ 
  # mapview(epa_pm25_sites_sf, cex = 'maxPM')
 
 #view with ggplot
@@ -73,9 +73,57 @@ mapview(counties_sf_join,
   #geom_sf(data=epa_pm25_sites_sf)
 ```
 
+```{r read in HUC12 dataset}
+#read in HUC12 dataset
+HUC12 <- st_read("./Data/Spatial/HUC12_Watershed_Boundaries/NHD_-_Watershed_Boundaries_HUC_12.shp")
+
+#view HUC12 data with mapview
+mapview(HUC12)
+
+```
+
+```{r example code from Lesson 9 on finding centroids}
+#Select the triangle counties into a new sf data frame
+triCo <- counties_sf_utm %>% 
+  filter(NAME %in% c("Durham","Wake", "Orange", "Chatham")) 
+
+#Plot
+myMap = ggplot() + 
+  geom_sf(data = triCo)
+myMap
+
+#Extract the centroids of the selected features and show them
+triCo_centroids <-  st_centroid(triCo)
+myMap <- myMap + geom_sf(data = triCo_centroids, color = 'blue')
+myMap
+
+#Buffer the centroids outward 2km and add them to our
+triCo_centroids_2km <- st_buffer(triCo_centroids, 2000)
+myMap <- myMap + geom_sf(data = triCo_centroids_2km, color = 'orange', fill=NA)
+myMap
+
+#Buffer the counties inward 2km
+triCo_in2km <- st_buffer(triCo, -2000)
+myMap <- myMap + geom_sf(data = triCo_in2km, color = 'green', fill=NA)
+myMap
+
+#Combine the centroids into one feature and construct a convex hull around them
+triCo_centroids_chull <- triCo_centroids %>% 
+  st_union() %>% 
+  st_convex_hull()
+myMap <- myMap + geom_sf(data = triCo_centroids_chull, color = 'red', fill=NA)
+myMap
+
+#Combine the centroids into one feature and draw voronoi polygons
+triCo_centroids_voronoi <- triCo_centroids %>% 
+  st_union() %>% 
+  st_voronoi()
+myMap <- myMap + geom_sf(data = triCo_centroids_voronoi, color = 'purple', fill=NA)
+myMap
+```
 
 ```{r}
-#Compute HUC8 wind energy
+#Example for how to compute HUC8 wind energy
 wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv',
   colClasses = c('HUC_12' = 'factor')) %>%  
   mutate(HUC_8 = substr(HUC_12,1,8)) %>% 
@@ -102,7 +150,7 @@ ggplot(data=huc8_sf_join) +
 USCoalFields <- st_read('./Data/Spatial/US_Coal_Fields/US_Coal_Fields.shp')
 
 #View using ggplot
-ggplot(data=USCoalFields) + geom_sf()
+#ggplot(data=USCoalFields) + geom_sf()
 
 #View using mapview
 mapview(USCoalFields)
