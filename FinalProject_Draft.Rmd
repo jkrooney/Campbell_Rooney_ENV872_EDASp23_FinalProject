@@ -69,6 +69,56 @@ ggplot() +
   geom_sf(data=epa_pm25_sites_sf)
 ```
 
+```{r read in HUC12 spatial data}
+#read in HUC12 spatial data file
+HUC12 <- st_read("./Data/Spatial/HUC12_Watershed_Boundaries/NHD_-_Watershed_Boundaries_HUC_12.shp")
+
+#view HUC12 data on map
+mapview(HUC12)
+
+```
+
+```{r Find centroids of HUCs}
+#Select the triangle counties into a new sf data frame
+triCo <- counties_sf_utm %>% 
+  filter(NAME %in% c("Durham","Wake", "Orange", "Chatham")) 
+
+#Plot
+myMap = ggplot() + 
+  geom_sf(data = HUC12)
+myMap
+
+#Extract the centroids of the selected features and show them
+triCo_centroids <-  st_centroid(triCo)
+myMap <- myMap + geom_sf(data = triCo_centroids, color = 'blue')
+myMap
+
+#Buffer the centroids outward 2km and add them to our
+triCo_centroids_2km <- st_buffer(triCo_centroids, 2000)
+myMap <- myMap + geom_sf(data = triCo_centroids_2km, color = 'orange', fill=NA)
+myMap
+
+#Buffer the counties inward 2km
+triCo_in2km <- st_buffer(triCo, -2000)
+myMap <- myMap + geom_sf(data = triCo_in2km, color = 'green', fill=NA)
+myMap
+
+#Combine the centroids into one feature and construct a convex hull around them
+triCo_centroids_chull <- triCo_centroids %>% 
+  st_union() %>% 
+  st_convex_hull()
+myMap <- myMap + geom_sf(data = triCo_centroids_chull, color = 'red', fill=NA)
+myMap
+
+#Combine the centroids into one feature and draw voronoi polygons
+triCo_centroids_voronoi <- triCo_centroids %>% 
+  st_union() %>% 
+  st_voronoi()
+myMap <- myMap + geom_sf(data = triCo_centroids_voronoi, color = 'purple', fill=NA)
+myMap
+
+```
+
 
 ```{r}
 #Compute HUC8 wind energy
@@ -92,6 +142,7 @@ ggplot(data=huc8_sf_join) +
     fill ='MW/year'
   )
 ```
+
 
 ```{r Read in US Coal Field Data}
 #Read in uploaded data from Spatial data folder
