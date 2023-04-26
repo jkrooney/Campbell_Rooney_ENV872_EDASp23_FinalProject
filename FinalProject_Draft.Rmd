@@ -4,14 +4,13 @@ author: "Sam Campbell & John Rooney"
 date: "`r Sys.Date()`"
 output: html_document
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r Install packages, message=FALSE, warning=FALSE}
 #Import the tidyverse library 
-library(tidyverse, quietly = TRUE)
+library(tidyverse)
 library(lubridate)
 
 #install.packages('sf')
@@ -26,30 +25,40 @@ sf::sf_use_s2(FALSE)
 
 ```
 
+```{r read in counties}
+wy_counties <- st_read("./Data/Spatial/cb_2021_us_county_20m/cb_2021_us_county_20m.shp")
+```
 
 ```{r join.attributes.to.spatial features}
-#Read the 2018 SVI county-level dataset for NC
-svi2018_nc_raw <- read.csv(
-  'https://svi.cdc.gov/Documents/Data/2018_SVI_Data/CSV/States_Counties/NorthCarolina_COUNTY.csv',
-  colClasses = c('FIPS' = 'factor')) %>% 
-  select(COUNTY, FIPS, LOCATION, E_TOTPOP, E_POV, E_MINRTY)
+
+#read in svi data for WY
+svi2020_wy_raw <- read.csv("./Data/Raw/Wyoming.csv", 
+  colClasses = c('FIPS' = 'factor'))
+
+#check raw structure
+str(svi2020_wy_raw)
+
+#select needed columns
+svi2020_wy_processed <- svi2020_wy_raw %>%
+  select(COUNTY, FIPS, LOCATION, E_TOTPOP, E_POV150, E_MINRTY)
+
+#save processed file
+write.csv(svi2020_wy_processed, row.names = F, file = "./Data/Processed/svi2020_wy_processed.csv")
 
 #Check structure
-str(svi2018_nc_raw)
+str(svi2020_wy_processed)
 
-#Join the SVI attributes to the county spatial features
-counties_sf_join <-  merge(x = counties_sf,
-                           y = svi2018_nc_raw, 
-                           by.x = "GEOID", 
-                           by.y = "FIPS" )
+```
 
-#Tidyverse version of the join
-counties_sf_join <- counties_sf %>% 
-  left_join(svi2018_nc_raw, by = c("GEOID" = "FIPS") )
+```{r join svi to county data}
+
+#join svi to county data
+counties_sf_join <- wy_counties %>% 
+  left_join(svi2020_wy_processed, by = c("GEOID" = "FIPS") )
 
 #View with mapview
 mapview(counties_sf_join, 
-        zcol = 'E_POV', 
+        zcol = 'E_POV150', 
         col.regions = brewer.pal(2, 'RdBu')) + 
   mapview(epa_pm25_sites_sf, cex = 'maxPM')
 
@@ -58,7 +67,6 @@ ggplot() +
   geom_sf(data=counties_sf_join,aes(fill = E_POV),alpha=0.3) + 
   scale_fill_gradient2(low="red",high="blue",midpoint = 60000) + 
   geom_sf(data=epa_pm25_sites_sf)
-
 ```
 
 
@@ -84,19 +92,6 @@ ggplot(data=huc8_sf_join) +
     fill ='MW/year'
   )
 ```
-
-```{r Read in HUC12 watershed data}
-#Read in uploaded data from Spatial Data folder
-HUC12 <- st_read('./Data/Spatial/HUC12_Watershed_Boundaries/NHD_-_Watershed_Boundaries_HUC_12.shp')
-
-#View using ggplot
-ggplot(data=HUC12) + geom_sf()
-
-#View using mapview
-mapview(HUC12)
-
-```
-
 
 ```{r Read in US Coal Field Data}
 #Read in uploaded data from Spatial data folder
