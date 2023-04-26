@@ -33,10 +33,10 @@ wy_counties <- st_read("./Data/Spatial/cb_2021_us_county_20m/cb_2021_us_county_2
   filter(STATEFP == 56) #filter for WY
 ```
 
-```{r join.attributes.to.spatial features}
+```{r read and wrangle svi data}
 
 #read in svi data for WY
-svi2020_wy_raw <- read.csv("./Data/Raw/Wyoming.csv", 
+svi2020_wy_raw <- read.csv("./Data/Raw/Wyoming_COUNTY.csv", 
   colClasses = c('FIPS' = 'factor'))
 
 #check raw structure
@@ -122,7 +122,7 @@ myMap <- myMap + geom_sf(data = triCo_centroids_voronoi, color = 'purple', fill=
 myMap
 ```
 
-```{r}
+```{r example from lesson 9 on computing and mapping wind energy data}
 #Example for how to compute HUC8 wind energy
 wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv',
   colClasses = c('HUC_12' = 'factor')) %>%  
@@ -168,7 +168,7 @@ If you have difficulty, the link you want is: - <https://opendata.arcgis.com/dat
 
 This a link to a spatial dataset in GeoJSON format. Now let's read this dataset in and explore it:
 
-```{r load.geojson.data}
+```{r example from lesson nine load.geojson.data}
 powerplants_sf <- st_read('https://opendata.arcgis.com/datasets/ee0263bd105d41599be22d46107341c3_0.geojson')
 
 #Reveal the field names
