@@ -130,53 +130,41 @@ mapview(HUC12)
 
 ```
 
-```{r example code from Lesson 9 on finding centroids}
-#Select the triangle counties into a new sf data frame
-triCo <- counties_sf_utm %>% 
-  filter(NAME %in% c("Durham","Wake", "Orange", "Chatham")) 
+```{r compute centroids of HUC12s}
+#apply st_centroid function to geometry column of HUC12 dataset
+HUC12Centroids <- HUC12 %>% 
+  mutate(geometry = st_centroid(geometry))
 
-#Plot
-myMap = ggplot() + 
-  geom_sf(data = triCo)
-myMap
+#check that the HUC12 centroids show up as expected when mapped
+mapview(HUC12Centroids)
 
-#Extract the centroids of the selected features and show them
-triCo_centroids <-  st_centroid(triCo)
-myMap <- myMap + geom_sf(data = triCo_centroids, color = 'blue')
-myMap
+#check the crs of each dataframe
+st_crs(wy_counties)
+#^uses NAD83
+st_crs(HUC12Centroids)
+#^uses WGS 84
 
-#Buffer the centroids outward 2km and add them to our
-triCo_centroids_2km <- st_buffer(triCo_centroids, 2000)
-myMap <- myMap + geom_sf(data = triCo_centroids_2km, color = 'orange', fill=NA)
-myMap
+#transform the crs for HUC12Centroids dataframe to match wy_counties dataframe
+#EPSG code for NAD83 is 4269
+HUC12CentroidsNAD83 <- 
+  st_transform(HUC12Centroids,4269)
 
-#Buffer the counties inward 2km
-triCo_in2km <- st_buffer(triCo, -2000)
-myMap <- myMap + geom_sf(data = triCo_in2km, color = 'green', fill=NA)
-myMap
+#check crs for transformed HUC12CentroidsNAD83 dataframe
+st_crs(HUC12CentroidsNAD83)
+#now uses NAD83, same as wy_counties dataframe
 
-#Combine the centroids into one feature and construct a convex hull around them
-triCo_centroids_chull <- triCo_centroids %>% 
-  st_union() %>% 
-  st_convex_hull()
-myMap <- myMap + geom_sf(data = triCo_centroids_chull, color = 'red', fill=NA)
-myMap
-
-#Combine the centroids into one feature and draw voronoi polygons
-triCo_centroids_voronoi <- triCo_centroids %>% 
-  st_union() %>% 
-  st_voronoi()
-myMap <- myMap + geom_sf(data = triCo_centroids_voronoi, color = 'purple', fill=NA)
-myMap
+#Tag each centroid with the county in which it falls using st_join function
+HUC12Counties <- 
+  st_join(wy_counties, HUC12CentroidsNAD83) 
 ```
 
 ```{r example from lesson 9 on computing and mapping wind energy data}
 #Example for how to compute HUC8 wind energy
 wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv',
   colClasses = c('HUC_12' = 'factor')) %>%  
-  mutate(HUC_8 = substr(HUC_12,1,8)) %>% 
-  group_by(HUC_8) %>% 
-  summarize(SumWindEnergy = sum(AvgWindEnergy))
+  #mutate(HUC_8 = substr(HUC_12,1,8)) %>% 
+  #group_by(HUC_8) %>% 
+  #summarize(SumWindEnergy = sum(AvgWindEnergy))
   
 #Join to HUC_8 features
 huc8_sf_join = merge(x = huc8_sf,
