@@ -71,6 +71,16 @@ mapview(counties_sf_join,
   #geom_sf(data=counties_sf_join,aes(fill = E_POV),alpha=0.3) + 
   #scale_fill_gradient2(low="red",high="blue",midpoint = 60000) + 
   #geom_sf(data=epa_pm25_sites_sf)
+
+#Calculate percentage poverty by county with a new column
+counties_sf_join <- 
+  counties_sf_join %>% 
+  mutate(PercentPov = ((E_POV150 / E_TOTPOP)*100))
+
+#View percentage poverty by county with mapview
+mapview(counties_sf_join, 
+        zcol = 'PercentPov')
+
 ```
 
 ```{r powerplants in WY}
@@ -107,18 +117,23 @@ mapview(counties_sf_join,
         zcol = 'E_POV150') +
   mapview(wy_powerplants_sf,
           zcol = 'TYPE')
-```
 
-```{r Read in US Coal Field Data}
-#Read in uploaded data from Spatial data folder
-USCoalFields <- st_read('./Data/Spatial/US_Coal_Fields/US_Coal_Fields.shp')
-
-#View using ggplot
-#ggplot(data=USCoalFields) + geom_sf()
-
-#View using mapview
-mapview(USCoalFields)
-
+#aggregate power plants by energy type for simpler visualization
+wy_powerplants_sf <- 
+  wy_powerplants_sf %>% 
+  mutate(FossilFuel = c(TYPE = "CONVENTIONAL STEAM COAL", 
+                        "NATURAL GAS FIRED COMBUSTION TURBINE", 
+                        "ALL OTHER; NATURAL GAS FIRED COMBUSTION TURBINE", 
+                        "PETROLEUM LIQUIDS", 
+                        "CONVENTIONAL STEAM COAL; NATURAL GAS FIRED COMBUSTION TURBINE", 
+                        "NATURAL GAS INTERNAL COMBUSTION ENGINE; NATURAL GAS STEAM TURBINE; OTHER GASES; PETROLEUM LIQUIDS", 
+                        "NATURAL GAS FIRED COMBINED CYCLE; NATURAL GAS FIRED COMBUSTION TURBINE", 
+                        "NATURAL GAS STEAM TURBINE")) %>% 
+  mutate(Renewable = c(TYPE = "CONVENTIONAL HYDROELECTRIC", 
+                        "ONSHORE WIND TURBINE")) %>% 
+  mutate(Unknown = c(TYPE = "ALL OTHER",
+                      "NOT AVAILABLE",
+                     "OTHER GASES"))
 ```
 
 ```{r read in HUC12 dataset}
@@ -156,6 +171,55 @@ st_crs(HUC12CentroidsNAD83)
 #Tag each centroid with the county in which it falls using st_join function
 HUC12Counties <- 
   st_join(wy_counties, HUC12CentroidsNAD83) 
+
+#map newly created dataframe of HUC12Counties
+mapview(HUC12Counties)
+```
+
+```{r plotting wind data by HUC12s and counties}
+#Read in HUC12 wind energy data
+wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv',
+  colClasses = c('HUC_12' = 'factor'))
+
+#Join wind_raw dataframe with HUC12Counties dataframe to filter the wind data for Wyoming counties
+HUC12CountiesWind <- HUC12Counties %>% 
+  left_join(wind_raw, by = c("HUC12" = "HUC_12"))
+
+#Create tidied dataframe of wind energy by county and HUC12
+TidyHUC12CountiesWind <- HUC12CountiesWind %>% 
+  select(NAME, NAMELSAD, STATE_NAME, HUC12, AvgWindEnergy, kWhkm2day, geometry)
+
+#view new tidied data as a scatterplot
+PlotWindByCounty <- 
+  ggplot(TidyHUC12CountiesWind,
+       aes(x = NAME,
+           y = AvgWindEnergy)) +
+  geom_boxplot() +
+  labs(x = "County Name", y = "Avg Wind Speed in GWh / km^2 / day",
+       title = "Wind Speeds by County in Wyoming") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(PlotWindByCounty)
+```
+
+```{r alternative approach to plotting wind data, with averages at the county level}
+#Creating new data frame, calculating average wind energy by county
+AvgWindByCounty <- 
+  TidyHUC12CountiesWind %>% 
+  drop_na(AvgWindEnergy) %>% 
+  group_by(NAME) %>% 
+  summarize(AvgWind = mean(AvgWindEnergy))
+#^currently generates warning message "although coordinates are longitude/latitude, st_union assumes that they are planar"
+
+#View new AvgWindByCounty data as a scatterplot
+PlotAvgWindByCounty <- 
+  ggplot(AvgWindByCounty,
+       aes(x = NAME,
+           y = AvgWind)) +
+  geom_point() +
+  labs(x = "County Name", y = "Avg Wind Speed in GWh / km^2 / day",
+       title = "Average Wind Speed by County in Wyoming") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(PlotAvgWindByCounty)
 ```
 
 ```{r example from lesson 9 on computing and mapping wind energy data}
