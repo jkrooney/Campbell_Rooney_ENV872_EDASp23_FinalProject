@@ -121,19 +121,28 @@ mapview(counties_sf_join,
 #aggregate power plants by energy type for simpler visualization
 wy_powerplants_sf <- 
   wy_powerplants_sf %>% 
-  mutate(FossilFuel = c(TYPE = "CONVENTIONAL STEAM COAL", 
-                        "NATURAL GAS FIRED COMBUSTION TURBINE", 
-                        "ALL OTHER; NATURAL GAS FIRED COMBUSTION TURBINE", 
-                        "PETROLEUM LIQUIDS", 
-                        "CONVENTIONAL STEAM COAL; NATURAL GAS FIRED COMBUSTION TURBINE", 
-                        "NATURAL GAS INTERNAL COMBUSTION ENGINE; NATURAL GAS STEAM TURBINE; OTHER GASES; PETROLEUM LIQUIDS", 
-                        "NATURAL GAS FIRED COMBINED CYCLE; NATURAL GAS FIRED COMBUSTION TURBINE", 
-                        "NATURAL GAS STEAM TURBINE")) %>% 
-  mutate(Renewable = c(TYPE = "CONVENTIONAL HYDROELECTRIC", 
-                        "ONSHORE WIND TURBINE")) %>% 
-  mutate(Unknown = c(TYPE = "ALL OTHER",
-                      "NOT AVAILABLE",
-                     "OTHER GASES"))
+  mutate(FuelType = case_when("CONVENTIONAL STEAM COAL" ~ "FossilFuel")), 
+                        #"NATURAL GAS FIRED COMBUSTION TURBINE", 
+                        #"ALL OTHER; NATURAL GAS FIRED COMBUSTION TURBINE", 
+                        #"PETROLEUM LIQUIDS", 
+                        #"CONVENTIONAL STEAM COAL; NATURAL GAS FIRED COMBUSTION TURBINE", 
+                        #"NATURAL GAS INTERNAL COMBUSTION ENGINE; NATURAL GAS STEAM TURBINE; OTHER GASES; PETROLEUM LIQUIDS", 
+                        #"NATURAL GAS FIRED COMBINED CYCLE; NATURAL GAS FIRED COMBUSTION TURBINE", 
+                        #"NATURAL GAS STEAM TURBINE"), 
+  #Renewable = "CONVENTIONAL HYDROELECTRIC", 
+                        #"ONSHORE WIND TURBINE", 
+  #Unknown = "ALL OTHER",
+                      #"NOT AVAILABLE",
+                     #"OTHER GASES"))
+#^This currently generates error, "Error in `stopifnot()`: ! Problem while computing `FuelType = case_when("CONVENTIONAL STEAM COAL" ~ "FossilFuel")`. Caused by error in `case_when()`: ! LHS of case 1 (`"CONVENTIONAL STEAM COAL"`) must be a logical vector, not a character vector.
+
+#Example
+df <- df %>%
+  mutate(gender_group = case_when(
+    gender == "Male" ~ "M",
+    gender == "Female" ~ "F",
+    TRUE ~ "Other"
+  ))
 ```
 
 ```{r read in HUC12 dataset}
