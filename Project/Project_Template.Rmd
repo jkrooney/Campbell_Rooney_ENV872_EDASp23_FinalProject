@@ -1,13 +1,13 @@
 ---
 output: 
-  pdf_document:
+  html_document:
     keep_tex: yes
     fig_caption: yes
     number_sections: yes
 geometry: margin=2.54cm
 title: "Exploring Social Vulnerability, Power Plant Siting, and Wind Energy Potential in Wyoming"
-subtitle: "Web address for GitHub repository"
-author: "Name"
+subtitle: "https://github.com/jkrooney/Campbell_Rooney_ENV872_EDASp23_FinalProject"
+author: "Sam Campbell & John Rooney"
 fontsize: 12pt
 mainfont: Times New Roman
 
@@ -23,8 +23,18 @@ mainfont: Times New Roman
 
 ```{r setup, include=FALSE}
 # Set your working directory
+setwd()
 
 # Load your packages
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(leaflet)
+library(mapview); mapviewOptions(fgb = FALSE)
+library(RColorBrewer)
+
+#Disable on-the-fly projections
+sf::sf_use_s2(FALSE)
 
 # Set your ggplot theme
 
@@ -34,7 +44,13 @@ mainfont: Times New Roman
 
 
 # Rationale and Research Questions
+The Inflation Reduction Act (IRA) was passed by Congress in late summer of 2022. The IRA is a generational piece of legislation providing funding and incentives for domestic energy production in the United States, offering the strongest government support yet for transitioning to renewable energy and confronting the challenges posed by climate change.
 
+Among the many programs included in the IRA is one offering funding to help traditional fossil fuel communities transition to renewable energy production. To help us answer these questions, we decided to look at the state of Wyoming as a case study. Wyoming was selected for two main reasons. First, it is a state heavily reliant on traditional fossil fuel extraction and production. Second, we knew that Wyoming has relatively abundant wind energy potential, and that data existed that would help us understand and quantify wind energy potential throughout the state. 
+
+This led us to two research questions:
+1) What relationship is there between socially vulnerable communities and the presence of power plants?   
+2) What potential is there for renewable energy production in communities considered socially vulnerable? 
 
 
 \newpage
