@@ -108,7 +108,7 @@ nrow(powerplants_sf)
 #View on a map - specify the geometry column to draw faster
 plot(powerplants_sf$geometry)
 
-#Filter for just powerplants found in NC
+#Filter for just powerplants found in WY
 wy_powerplants_sf <- powerplants_sf %>% 
   filter(STATE == "WY") 
 
@@ -150,7 +150,7 @@ wy_powerplants_sf <-
 #^This currently generates error, "Error in ifelse(., TYPE %in% c("CONVENTIONAL STEAM COAL", "NATURAL GAS FIRED COMBUSTION TURBINE",  : 'list' object cannot be coerced to type 'logical'"
 
 #Example
-x_new <- ifelse(x %in% c("A", "B"), "X", x)
+#x_new <- ifelse(x %in% c("A", "B"), "X", x)
 ```
 
 ```{r read in HUC12 dataset}

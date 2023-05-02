@@ -1,6 +1,6 @@
 ---
 output: 
-  html_document:
+  html_document: 
     keep_tex: yes
     fig_caption: yes
     number_sections: yes
@@ -10,7 +10,6 @@ subtitle: "https://github.com/jkrooney/Campbell_Rooney_ENV872_EDASp23_FinalProje
 author: "Sam Campbell & John Rooney"
 fontsize: 12pt
 mainfont: Times New Roman
-
 ---
 
 \newpage
@@ -22,8 +21,6 @@ mainfont: Times New Roman
 \newpage
 
 ```{r setup, include=FALSE}
-# Set your working directory
-setwd(here())
 
 # Load your packages
 library(tidyverse)
@@ -31,9 +28,13 @@ library(lubridate)
 library(sf)
 library(leaflet)
 library(mapview); mapviewOptions(fgb = FALSE)
+library(here)
 
 #Disable on-the-fly projections
 sf::sf_use_s2(FALSE)
+
+# Set your working directory
+setwd(here())
 
 # Set your ggplot theme
 my.theme <- theme_light(base_size = 14)+
@@ -69,6 +70,8 @@ wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/m
   -  `message = FALSE` - messages do not appear in knitted file
   -  `warning = FALSE` - warnings do not appear...
   -  `fig.cap = "..."` - adds a caption to graphical results
+  
+  a;lsdkfj
   
 # Rationale and Research Questions
 The Inflation Reduction Act (IRA) was passed by Congress in late summer of 2022. The IRA is a generational piece of legislation providing funding and incentives for domestic energy production in the United States, offering the strongest government support yet for transitioning to renewable energy and confronting the challenges posed by climate change.
@@ -197,12 +200,12 @@ mapview(counties_sf_join,
         zcol = 'E_POV150')
 ```
 
-```{r spatial visualization of HUC 12 data, echo=FALSE}
+```{r spatial visualization of HUC 12 data, include=FALSE}
 #view HUC12 data with mapview
 mapview(HUC12)
 ```
 
-```{r powerplant visualizations, echo=FALSE}
+```{r powerplant visualizations, include=FALSE}
 #View on a map - specify the geometry column to draw faster
 plot(powerplants_sf$geometry)
 
@@ -229,12 +232,12 @@ mapview(counties_sf_join,
 ```{r visualiaation of svi with powerplants, echo=FALSE}
 #map counties, svi, powerplants
 mapview(counties_sf_join, 
-        zcol = 'E_POV150') +
+        zcol = 'PercentPov') +
   mapview(wy_powerplants_sf,
           zcol = 'TYPE')
 ```
 
-```{r map of HUC12 by county, echo=FALSE}
+```{r map of HUC12 by county, include=FALSE}
 #map newly created dataframe of HUC12Counties
 mapview(HUC12Counties)
 ```
@@ -258,7 +261,7 @@ PlotSVICountyPercent <-
   ggplot(counties_sf_join,
     aes(x = NAME,
         y = PercentPov)) +
-  geom_bar() +
+  geom_point() +
   labs(x = "County Name", y = "% of Residents in Poverty",
        title = "Wyoming Poverty Levels by County") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
