@@ -23,7 +23,7 @@ mainfont: Times New Roman
 
 ```{r setup, include=FALSE}
 # Set your working directory
-setwd()
+setwd(here())
 
 # Load your packages
 library(tidyverse)
@@ -31,18 +31,45 @@ library(lubridate)
 library(sf)
 library(leaflet)
 library(mapview); mapviewOptions(fgb = FALSE)
-library(RColorBrewer)
 
 #Disable on-the-fly projections
 sf::sf_use_s2(FALSE)
 
 # Set your ggplot theme
+my.theme <- theme_light(base_size = 14)+
+  theme(axis.text = element_text(color = "grey19"), 
+        legend.position = "top",
+        legend.justification = "left")
+theme_set(my.theme)
 
 # Load your datasets
+#read in counties data set
+wy_counties <- st_read("./Data/Spatial/cb_2021_us_county_20m/cb_2021_us_county_20m.shp") %>% 
+  filter(STATEFP == 56) #filter for WY
 
+#read in svi data for WY
+svi2020_wy_raw <- read.csv("./Data/Raw/Wyoming_COUNTY.csv", 
+  colClasses = c('FIPS' = 'factor'))
+
+#read in powerplant data for WY
+powerplants_sf <- st_read('https://opendata.arcgis.com/datasets/ee0263bd105d41599be22d46107341c3_0.geojson')
+
+#read in HUC12 dataset
+HUC12 <- st_read("./Data/Spatial/HUC12_Watershed_Boundaries/NHD_-_Watershed_Boundaries_HUC_12.shp")
+
+#Read in HUC12 wind energy data
+wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv',
+  colClasses = c('HUC_12' = 'factor'))
 ```
 
-
+- Knitting commands in code chunks:
+  -  `include = FALSE` - code is run, but neither code nor results appear in knitted file
+  -  `echo = FALSE` - code not included in knitted file, but results are
+  -  `eval = FALSE` - code is not run in the knitted file
+  -  `message = FALSE` - messages do not appear in knitted file
+  -  `warning = FALSE` - warnings do not appear...
+  -  `fig.cap = "..."` - adds a caption to graphical results
+  
 # Rationale and Research Questions
 The Inflation Reduction Act (IRA) was passed by Congress in late summer of 2022. The IRA is a generational piece of legislation providing funding and incentives for domestic energy production in the United States, offering the strongest government support yet for transitioning to renewable energy and confronting the challenges posed by climate change.
 
@@ -58,18 +85,186 @@ This led us to two research questions:
 # Dataset Information
 
 
+```{r svi data wrangling, include=FALSE}
+#check raw structure
+str(svi2020_wy_raw)
 
+#select needed columns
+svi2020_wy_processed <- svi2020_wy_raw %>%
+  select(COUNTY, FIPS, LOCATION, E_TOTPOP, E_POV150, E_MINRTY)
+
+#save processed file
+write.csv(svi2020_wy_processed, row.names = F, file = "./Data/Processed/svi2020_wy_processed.csv")
+
+#Check structure
+str(svi2020_wy_processed)
+
+```
+
+
+```{r join svi to county data, include=FALSE}
+
+#join svi to county data
+counties_sf_join <- wy_counties %>% 
+  left_join(svi2020_wy_processed, by = c("GEOID" = "FIPS") )
+
+#Calculate percentage poverty by county with a new column
+counties_sf_join <- 
+  counties_sf_join %>% 
+  mutate(PercentPov = ((E_POV150 / E_TOTPOP)*100))
+
+
+#Change county name from a character vector to a factor
+counties_sf_join$NAME <- factor(counties_sf_join$NAME)
+
+```
+
+```{r powerplant wrangling}
+#Reveal the field names
+colnames(powerplants_sf)
+
+#How many records
+nrow(powerplants_sf)
+
+#Filter for just powerplants found in NC
+wy_powerplants_sf <- powerplants_sf %>% 
+  filter(STATE == "WY") 
+
+#Have a look the variety of types (and number of each)
+wy_powerplants_sf %>% 
+  st_drop_geometry() %>% 
+  count(TYPE, sort=TRUE)
+
+```
+
+```{r compute centroids of HUC12s}
+#apply st_centroid function to geometry column of HUC12 dataset
+HUC12Centroids <- HUC12 %>% 
+  mutate(geometry = st_centroid(geometry))
+
+#check that the HUC12 centroids show up as expected when mapped
+mapview(HUC12Centroids)
+
+#check the crs of each dataframe
+st_crs(wy_counties)
+#^uses NAD83
+st_crs(HUC12Centroids)
+#^uses WGS 84
+
+#transform the crs for HUC12Centroids dataframe to match wy_counties dataframe
+#EPSG code for NAD83 is 4269
+HUC12CentroidsNAD83 <- 
+  st_transform(HUC12Centroids,4269)
+
+#check crs for transformed HUC12CentroidsNAD83 dataframe
+st_crs(HUC12CentroidsNAD83)
+#now uses NAD83, same as wy_counties dataframe
+
+#Tag each centroid with the county in which it falls using st_join function
+HUC12Counties <- 
+  st_join(wy_counties, HUC12CentroidsNAD83) 
+
+```
+
+```{r wind data wrangling}
+#Join wind_raw dataframe with HUC12Counties dataframe to filter the wind data for Wyoming counties
+HUC12CountiesWind <- HUC12Counties %>% 
+  left_join(wind_raw, by = c("HUC12" = "HUC_12"))
+
+#Create tidied dataframe of wind energy by county and HUC12
+TidyHUC12CountiesWind <- HUC12CountiesWind %>% 
+  select(NAME, NAMELSAD, STATE_NAME, HUC12, AvgWindEnergy, kWhkm2day, geometry)
+```
+
+```{r wrangling average wind by county}
+#Creating new data frame, calculating average wind energy by county
+AvgWindByCounty <- 
+  TidyHUC12CountiesWind %>% 
+  drop_na(AvgWindEnergy) %>% 
+  group_by(NAME) %>% 
+  summarize(AvgWind = mean(AvgWindEnergy))
+#^currently generates warning message "although coordinates are longitude/latitude, st_union assumes that they are planar"
+
+
+```
 \newpage
 
 # Exploratory Analysis 
 
+```{r spatial visualization of counties by poverty rate, include=FALSE}
+#View with mapview
+mapview(counties_sf_join, 
+        zcol = 'E_POV150')
+```
 
+```{r spatial visualization of HUC 12 data}
+#view HUC12 data with mapview
+mapview(HUC12)
+```
+
+```{r}
+#View on a map - specify the geometry column to draw faster
+plot(powerplants_sf$geometry)
+
+# Examine counts by prim fuel type
+ggplot(wy_powerplants_sf) + 
+  geom_sf(aes(color = PRIM_FUEL)) 
+
+#counts by type
+ggplot(wy_powerplants_sf) + 
+  geom_sf(aes(color = TYPE)) 
+```
 
 \newpage
 
 # Analysis
 
 
+```{r scatterplot visualization poverty by county, include=FALSE}
+#View percentage poverty by county as a scatterplot
+PlotSVICountyPercent <- 
+  ggplot(counties_sf_join,
+    aes(x = NAME,
+        y = PercentPov)) +
+  geom_bar() +
+  labs(x = "County Name", y = "% of Residents in Poverty",
+       title = "Wyoming Poverty Levels by County") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(PlotSVICountyPercent)
+```
+
+```{r percent poverty by county, include=FALSE}
+#View percentage poverty by county with mapview
+mapview(counties_sf_join, 
+        zcol = 'PercentPov')
+```
+
+```{r}
+
+#map counties, svi, powerplants
+mapview(counties_sf_join, 
+        zcol = 'E_POV150') +
+  mapview(wy_powerplants_sf,
+          zcol = 'TYPE')
+```
+
+```{r map of HUC12 by county}
+#map newly created dataframe of HUC12Counties
+mapview(HUC12Counties)
+```
+
+```{r visualize average wind by county as scatter}
+#View new AvgWindByCounty data as a scatterplot
+PlotAvgWindByCounty <- 
+  ggplot(AvgWindByCounty,
+       aes(x = NAME,
+           y = AvgWind)) +
+  geom_point() +
+  labs(x = "County Name", y = "Avg Wind Speed in GWh / km^2 / day",
+       title = "Average Wind Speed by County in Wyoming") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(PlotAvgWindByCounty)
+```
 
 ## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>
 
@@ -87,3 +282,5 @@ This led us to two research questions:
 
 # References
 <add references here if relevant, otherwise delete this section> 
+
+
