@@ -71,7 +71,6 @@ wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/m
   -  `warning = FALSE` - warnings do not appear...
   -  `fig.cap = "..."` - adds a caption to graphical results
   
-  a;lsdkfj
   
 # Rationale and Research Questions
 The Inflation Reduction Act (IRA) was passed by Congress in late summer of 2022. The IRA is a generational piece of legislation providing funding and incentives for domestic energy production in the United States, offering the strongest government support yet for transitioning to renewable energy and confronting the challenges posed by climate change.
