@@ -119,14 +119,14 @@ counties_sf_join$NAME <- factor(counties_sf_join$NAME)
 
 ```
 
-```{r powerplant wrangling}
+```{r powerplant wrangling, include=FALSE}
 #Reveal the field names
 colnames(powerplants_sf)
 
 #How many records
 nrow(powerplants_sf)
 
-#Filter for just powerplants found in NC
+#Filter for just powerplants found in WY
 wy_powerplants_sf <- powerplants_sf %>% 
   filter(STATE == "WY") 
 
@@ -220,19 +220,6 @@ ggplot(wy_powerplants_sf) +
 # Analysis
 
 
-```{r scatterplot visualization poverty by county, include=FALSE}
-#View percentage poverty by county as a scatterplot
-PlotSVICountyPercent <- 
-  ggplot(counties_sf_join,
-    aes(x = NAME,
-        y = PercentPov)) +
-  geom_bar() +
-  labs(x = "County Name", y = "% of Residents in Poverty",
-       title = "Wyoming Poverty Levels by County") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-print(PlotSVICountyPercent)
-```
-
 ```{r percent poverty by county, include=FALSE}
 #View percentage poverty by county with mapview
 mapview(counties_sf_join, 
@@ -264,6 +251,19 @@ PlotAvgWindByCounty <-
        title = "Average Wind Speed by County in Wyoming") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 print(PlotAvgWindByCounty)
+```
+
+```{r scatterplot visualization poverty by county, include=FALSE}
+#View percentage poverty by county as a scatterplot
+PlotSVICountyPercent <- 
+  ggplot(counties_sf_join,
+    aes(x = NAME,
+        y = PercentPov)) +
+  geom_bar() +
+  labs(x = "County Name", y = "% of Residents in Poverty",
+       title = "Wyoming Poverty Levels by County") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(PlotSVICountyPercent)
 ```
 
 ## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>
