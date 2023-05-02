@@ -137,7 +137,7 @@ wy_powerplants_sf %>%
 
 ```
 
-```{r compute centroids of HUC12s}
+```{r compute centroids of HUC12s, include=FALSE}
 #apply st_centroid function to geometry column of HUC12 dataset
 HUC12Centroids <- HUC12 %>% 
   mutate(geometry = st_centroid(geometry))
@@ -166,7 +166,7 @@ HUC12Counties <-
 
 ```
 
-```{r wind data wrangling}
+```{r wind data wrangling, include=FALSE}
 #Join wind_raw dataframe with HUC12Counties dataframe to filter the wind data for Wyoming counties
 HUC12CountiesWind <- HUC12Counties %>% 
   left_join(wind_raw, by = c("HUC12" = "HUC_12"))
@@ -176,7 +176,7 @@ TidyHUC12CountiesWind <- HUC12CountiesWind %>%
   select(NAME, NAMELSAD, STATE_NAME, HUC12, AvgWindEnergy, kWhkm2day, geometry)
 ```
 
-```{r wrangling average wind by county}
+```{r wrangling average wind by county, include=FALSE}
 #Creating new data frame, calculating average wind energy by county
 AvgWindByCounty <- 
   TidyHUC12CountiesWind %>% 
@@ -191,18 +191,18 @@ AvgWindByCounty <-
 
 # Exploratory Analysis 
 
-```{r spatial visualization of counties by poverty rate, include=FALSE}
+```{r spatial visualization of counties by poverty rate, echo=FALSE}
 #View with mapview
 mapview(counties_sf_join, 
         zcol = 'E_POV150')
 ```
 
-```{r spatial visualization of HUC 12 data}
+```{r spatial visualization of HUC 12 data, echo=FALSE}
 #view HUC12 data with mapview
 mapview(HUC12)
 ```
 
-```{r}
+```{r powerplant visualizations, echo=FALSE}
 #View on a map - specify the geometry column to draw faster
 plot(powerplants_sf$geometry)
 
@@ -220,14 +220,13 @@ ggplot(wy_powerplants_sf) +
 # Analysis
 
 
-```{r percent poverty by county, include=FALSE}
+```{r percent poverty by county, echo=FALSE}
 #View percentage poverty by county with mapview
 mapview(counties_sf_join, 
         zcol = 'PercentPov')
 ```
 
-```{r}
-
+```{r visualiaation of svi with powerplants, echo=FALSE}
 #map counties, svi, powerplants
 mapview(counties_sf_join, 
         zcol = 'E_POV150') +
@@ -235,12 +234,12 @@ mapview(counties_sf_join,
           zcol = 'TYPE')
 ```
 
-```{r map of HUC12 by county}
+```{r map of HUC12 by county, echo=FALSE}
 #map newly created dataframe of HUC12Counties
 mapview(HUC12Counties)
 ```
 
-```{r visualize average wind by county as scatter}
+```{r visualize average wind by county as scatter, echo=FALSE}
 #View new AvgWindByCounty data as a scatterplot
 PlotAvgWindByCounty <- 
   ggplot(AvgWindByCounty,
@@ -253,7 +252,7 @@ PlotAvgWindByCounty <-
 print(PlotAvgWindByCounty)
 ```
 
-```{r scatterplot visualization poverty by county, include=FALSE}
+```{r scatterplot visualization poverty by county, echo=FALSE}
 #View percentage poverty by county as a scatterplot
 PlotSVICountyPercent <- 
   ggplot(counties_sf_join,
