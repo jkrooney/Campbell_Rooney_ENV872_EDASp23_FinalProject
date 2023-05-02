@@ -68,7 +68,7 @@ mapview(counties_sf_join,
 
 #view with ggplot
 #ggplot() + 
-  #geom_sf(data=counties_sf_join,aes(fill = E_POV),alpha=0.3) + 
+  #geom_sf(data=counties_sf_join,aes(fill = E_POV150),alpha=0.3) + 
   #scale_fill_gradient2(low="red",high="blue",midpoint = 60000) + 
   #geom_sf(data=epa_pm25_sites_sf)
 
@@ -81,6 +81,19 @@ counties_sf_join <-
 mapview(counties_sf_join, 
         zcol = 'PercentPov')
 
+#Change county name from a character vector to a factor
+counties_sf_join$NAME <- factor(counties_sf_join$NAME)
+
+#View percentage poverty by county as a scatterplot
+PlotSVICountyPercent <- 
+  ggplot(counties_sf_join,
+    aes(x = NAME,
+        y = PercentPov)) +
+  geom_bar() +
+  labs(x = "County Name", y = "% of Residents in Poverty",
+       title = "Wyoming Poverty Levels by County") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(PlotSVICountyPercent)
 ```
 
 ```{r powerplants in WY}
@@ -226,27 +239,30 @@ PlotAvgWindByCounty <-
 print(PlotAvgWindByCounty)
 ```
 
-```{r example from lesson 9 on computing and mapping wind energy data}
-#Example for how to compute HUC8 wind energy
-wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv',
-  colClasses = c('HUC_12' = 'factor')) %>%  
-  #mutate(HUC_8 = substr(HUC_12,1,8)) %>% 
-  #group_by(HUC_8) %>% 
-  #summarize(SumWindEnergy = sum(AvgWindEnergy))
-  
-#Join to HUC_8 features
-huc8_sf_join = merge(x = huc8_sf,
-                     y = wind_raw,
-                     by.x = 'HUC_8',
-                     by.y = 'HUC_8')
+```{r Create new combined data frame with county SVI and wind data to plot together}
+#Select needed columns from counties_sf_join data frame
+counties_sf_join_selected <- 
+  counties_sf_join %>% 
+  select(NAME, PercentPov)
 
-#View the outputs
-ggplot(data=huc8_sf_join) +
-  geom_sf(aes(fill=SumWindEnergy)) +
-  labs(
-    title='Wind energy by HUC 8',
-    fill ='MW/year'
-  )
+#Select needed columns from AvgWindByCounty dataframe, removing geometry column
+AvgWindByCounty_selected <- 
+  AvgWindByCounty %>% 
+  select(NAME, AvgWind)
+
+#Create combined data frame
+SVIWindCounties <- 
+  counties_sf_join_selected %>% 
+  st_join(AvgWindByCounty_selected, by = "NAME")
+
+SVIWindCounties <- SVIWindCounties[1&2&3&4,]
+
+#Create combined data frame
+SVIWindCounties <- 
+  counties_sf_join %>% 
+  st_join(AvgWindByCounty, by = "NAME") %>% 
+  select(COUNTY, PercentPov, AvgWind, geometry)
+#^Currently generates multiple rows of observations with different average wind speeds within each county
+
 ```
-
 
