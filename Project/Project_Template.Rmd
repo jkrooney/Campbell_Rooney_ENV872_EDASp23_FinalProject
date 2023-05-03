@@ -211,7 +211,7 @@ AvgWindByCounty <-
 We used the ‘mapview()’ function to visualize the following:
   1. Wyoming counties and the number of people in poverty in each county
 
-```{r spatial visualization of counties by poverty rate, echo=FALSE}
+```{r spatial visualization of counties by poverty rate, echo=FALSE, fig.cap="Figure 1: Wyoming Counties"}
 #View with mapview
 mapview(counties_sf_join, 
         zcol = 'E_POV150')
@@ -219,22 +219,22 @@ mapview(counties_sf_join,
  
   2. Wyoming HUC12s
   
-```{r spatial visualization of HUC 12 data, echo=FALSE}
+```{r spatial visualization of HUC 12 data, echo=FALSE, fig.cap="Figure 2: HUC 12 Watersheds of Wyoming"}
 #view HUC12 data with mapview
 mapview(HUC12)
 ```
 
   3. The locations and fuel types of power plants in Wyoming
 
-```{r powerplant visualizations, echo=FALSE}
+```{r powerplant visualizations, echo=FALSE, fig.cap="Figure 3: Location and Type of Power Plants in Wyoming"}
  
 mapview(wy_powerplants_sf,
         zcol = 'TYPE', 
         position='bottomleft')
 ```
 
-We additionally decided to explore the structure and contents of data frames as they were created, including our raw and processed SVI data. 
-```{r structure SVI, echo=FALSE}
+We additionally decided to explore the structure and contents of data frames as they were created, including our raw and processed SVI data.These can be seen in Figure 4. 
+```{r structure SVI, echo=FALSE, fig.cap="Figure 4: Structure of Raw and Processed SVI Data Frames"}
 #check raw structure
 str(svi2020_wy_raw)
 
@@ -242,8 +242,8 @@ str(svi2020_wy_raw)
 str(svi2020_wy_processed)
 ```
 
-We additionally investigated the powerplants data before wrangling. 
-```{r powerplants explore, echo=FALSE}
+We additionally investigated the powerplants data before wrangling as seen in Figure 5. 
+```{r powerplants explore, echo=FALSE, fig.cap="Figure 5: Exploration of Power Plants Data Frame"}
 #Reveal the field names
 colnames(powerplants_sf)
 
@@ -267,7 +267,7 @@ Our analysis built on our initial research questions and initial hypothesis, whi
     
 We first generated a new column in our SVI dataframe to calculate the percentage of people in poverty in each Wyoming county, and visualized this using the 'mapview()' function to better see which counties were more impoverished relative to other counties (rather than viewing the number of people in poverty in each county as performed earlier, a visualization that was skewed by the differing populations of each county).
 
-```{r percent poverty by county, echo=FALSE}
+```{r percent poverty by county, echo=FALSE, fig.cap="Figure 6: Percentage of Population Living in Poverty"}
 #View percentage poverty by county with mapview
 mapview(counties_sf_join, 
         zcol = 'PercentPov')
@@ -275,7 +275,7 @@ mapview(counties_sf_join,
 
 We then used the 'mapview()' function to display a color gradient of poverty percentages within Wyoming counties on the same map as Wyoming power plants and their fuel types. The legend for power plant fuel types contains 13 types and so is quite large; we tried to simplify this into 3 major fuel types (Fossil Fuels, Renewables, and Unknown) using the 'ifelse()' function, but were unable to. By zooming out, we are able to view the whole map of Wyoming without being blocked by the legend of power plant fuel types.
 
-```{r visualization of svi with powerplants, echo=FALSE}
+```{r visualization of svi with powerplants, echo=FALSE, fig.cap="Figure 7: Visualization of Power Plant Locations and Population in Poverty By County"}
 #map counties, svi, powerplants
 mapview(counties_sf_join, 
         zcol = 'PercentPov') +
@@ -286,7 +286,7 @@ mapview(counties_sf_join,
 
 We calculated the centroids of our HUC12s to assign them to Wyoming counties, and then used the 'mapview()' function to visualize these HUC12 centroids across the state. 
 
-```{r map of HUC12 by county, echo=FALSE}
+```{r map of HUC12 by county, echo=FALSE, fig.cap="Figure 8: HUC 12 Watersheds Matched to Counties"}
 #map newly created dataframe of HUC12Counties
 mapview(HUC12Counties)
 ```
@@ -295,7 +295,7 @@ Once we had assigned the HUC12s to Wyoming counties, we were able to then match 
 
 We first visualized the range of wind energy within each county by looking at the wind energy for different HUC12s within each county as a box and whisker plot.
 
-```{r visualize the range of HUC12 wind energy within each county using a box and whisker plot, echo=FALSE}
+```{r visualize the range of HUC12 wind energy within each county using a box and whisker plot, echo=FALSE, fig.cap="Figure 9: Wind Energy Potential by County"}
 #view new tidied data as a boxplot
 PlotWindByCounty <- 
   ggplot(TidyHUC12CountiesWind,
@@ -310,7 +310,7 @@ print(PlotWindByCounty)
 
 We then developed a scatter plot to more succinctly visualize the average wind energy for each county. We think a bar plot might have enabled a clearer visualization of these average wind energy calculations, but this continually generated errors that we were unable to troubleshoot, so we chose to instead use a scatter plot.
 
-```{r visualize average wind by county as scatter plot, echo=FALSE}
+```{r visualize average wind by county as scatter plot, echo=FALSE, fig.cap="Figure 10: Average Wind Energy Potential by County"}
 #View new AvgWindByCounty data as a scatterplot
 PlotAvgWindByCounty <- 
   ggplot(AvgWindByCounty,
@@ -329,7 +329,7 @@ We initially envisioned combining wind energy and poverty levels on a single map
 
 We additionally envisioned using the 'facet_grid' function to display both scatterplots together, but when using the 'left_join' function to add average wind energy to our data frame including poverty information found that the new data frame inexplicably generated multiple average wind speeds for each county. These were listed under the correct wind speed as (for example) rows 1.1, 1.2, etc. We attempted to wrangle the new data frame to only include the correct wind speeds in rows 1, 2, 3, etc but could not separate them out. We decided that, for all practical purposes, the two scatterplots could still be shown one above the other even without the use of the 'facet_grid' function.
 
-```{r scatterplot visualization poverty by county, echo=FALSE}
+```{r scatterplot visualization poverty by county, echo=FALSE, fig.cap="Figure 11: Percentage of Population in Poverty by County"}
 #View percentage poverty by county as a scatterplot
 PlotSVICountyPercent <- 
   ggplot(counties_sf_join,
