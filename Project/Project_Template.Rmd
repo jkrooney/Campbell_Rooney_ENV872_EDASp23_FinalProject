@@ -10,8 +10,12 @@ subtitle: "https://github.com/jkrooney/Campbell_Rooney_ENV872_EDASp23_FinalProje
 author: "Sam Campbell & John Rooney"
 fontsize: 12pt
 mainfont: Times New Roman
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
+```{=tex}
 \newpage
 \tableofcontents 
 \newpage
@@ -19,7 +23,7 @@ mainfont: Times New Roman
 \newpage
 \listoffigures 
 \newpage
-
+```
 ```{r setup, include=FALSE}
 
 # Load your packages
@@ -63,55 +67,173 @@ wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/m
   colClasses = c('HUC_12' = 'factor'))
 ```
 
-- Knitting commands in code chunks:
-  -  `include = FALSE` - code is run, but neither code nor results appear in knitted file
-  -  `echo = FALSE` - code not included in knitted file, but results are
-  -  `eval = FALSE` - code is not run in the knitted file
-  -  `message = FALSE` - messages do not appear in knitted file
-  -  `warning = FALSE` - warnings do not appear...
-  -  `fig.cap = "..."` - adds a caption to graphical results
-  
-  
+-   Knitting commands in code chunks:
+    -   `include = FALSE` - code is run, but neither code nor results
+        appear in knitted file
+    -   `echo = FALSE` - code not included in knitted file, but results
+        are
+    -   `eval = FALSE` - code is not run in the knitted file
+    -   `message = FALSE` - messages do not appear in knitted file
+    -   `warning = FALSE` - warnings do not appear...
+    -   `fig.cap = "..."` - adds a caption to graphical results
+
 # Rationale and Research Questions
-The Inflation Reduction Act (IRA) was passed by the US Congress in late summer of 2022. The IRA is a generational piece of legislation providing funding and incentives for domestic energy production in the United States, offering the strongest government support yet for transitioning to renewable energy and confronting the challenges posed by climate change.
 
-Among the many programs included in the IRA is one offering funding to help traditional fossil fuel communities and low-income communities transition to renewable energy production. To help us answer these questions, we decided to look at the state of Wyoming as a case study. Wyoming was selected for two main reasons. First, it is a state heavily reliant on traditional fossil fuel extraction and production. Second, we knew that Wyoming has relatively abundant wind energy potential, and that data existed that would help us understand and quantify wind energy potential throughout the state. 
+The Inflation Reduction Act (IRA) was passed by the US Congress in late
+summer of 2022. The IRA is a generational piece of legislation providing
+funding and incentives for domestic energy production in the United
+States, offering the strongest government support yet for transitioning
+to renewable energy and confronting the challenges posed by climate
+change.
 
-This led us to two research questions:
-  1. What relationship is there between socially vulnerable communities and the presence of power plants?   
-  2. What potential is there for renewable energy production in communities considered socially vulnerable? 
+Among the many programs included in the IRA is one offering funding to
+help traditional fossil fuel communities and low-income communities
+transition to renewable energy production. To help us answer these
+questions, we decided to look at the state of Wyoming as a case study.
+Wyoming was selected for two main reasons. First, it is a state heavily
+reliant on traditional fossil fuel extraction and production. Second, we
+knew that Wyoming has relatively abundant wind energy potential, and
+that data existed that would help us understand and quantify wind energy
+potential throughout the state.
 
+This led us to two research questions: 1. What relationship is there
+between socially vulnerable communities and the presence of power
+plants?
+2. What potential is there for renewable energy production in
+communities considered socially vulnerable?
 
 \newpage
 
 # Dataset Information
+
 We worked with the following 5 datasets:
 
-  1. County Boundary Data: In order to first map county lines onto our state of interest, we downloaded cartographic boundary shapefiles from the US Census Bureau website. The most recent year for these files was 2022. We used the 20m resolution file. Files were downloaded from the following URL: <https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html>.
+1.  County Boundary Data: In order to first map county lines onto our
+    state of interest, we downloaded cartographic boundary shapefiles
+    from the US Census Bureau website. The most recent year for these
+    files was 2022. We used the 20m resolution file. 
 
-  2. HUC12 Boundary Data: Because our wind energy data was at the HUC12 geographic level, we needed to download a cartographic boundary shapefile on HUC12s in Wyoming to then be able to assign HUC12 geography and wind energy figures to Wyoming counties. This would enable us to then do our comparative analysis with SVI and power plants at the county level. HUC12 data was last updated in 2019 and comes from the Wyoming Geospatial Hub of the Wyoming Water Development Office. We downloaded this shapefile from the following URL: <https://water.geospatialhub.org/datasets/687dadd8b93f4ad092b64a84caf5b72a_0/explore?location=42.808013%2C-107.387472%2C6.66>.
+2.  HUC12 Boundary Data: Because our wind energy data was at the HUC12
+    geographic level, we needed to download a cartographic boundary
+    shapefile on HUC12s in Wyoming to then be able to assign HUC12
+    geography and wind energy figures to Wyoming counties. This would
+    enable us to then do our comparative analysis with SVI and power
+    plants at the county level. HUC12 data was last updated in 2019 and
+    comes from the Wyoming Geospatial Hub of the Wyoming Water
+    Development Office. 
 
-  3. The Social Vulnerability Index (SVI) data was downloaded from the US Center for Disease Control Agency for Toxic Substances and Disease Registry website. The most recent year for which data is available is 2020. The geography selected was Wyoming, and the geography type was counties. We downloaded data as both shapefiles and csv file types, ultimately using the csv file. Data was pulled from the following URL: <https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html>. Additional documentation for the data was found here: <https://www.atsdr.cdc.gov/placeandhealth/svi/documentation/SVI_documentation_2020.html>.  
+3.  The Social Vulnerability Index (SVI) data was downloaded from the US
+    Center for Disease Control Agency for Toxic Substances and Disease
+    Registry website. The most recent year for which data is available
+    is 2020. The geography selected was Wyoming, and the geography type
+    was counties. We downloaded data as both shapefiles and csv file
+    types, ultimately using the csv file. 
 
-  4. Homeland Infrastructure Foundation-Level Data (HIFLD) for Power Plant types and locations in Wyoming was read directly into R using their open data site as GeoJSON data. The link used for this project was <https://opendata.arcgis.com/datasets/ee0263bd105d41599be22d46107341c3_0.geojson>. 
+4.  Homeland Infrastructure Foundation-Level Data (HIFLD) for Power
+    Plant types and locations in Wyoming was read directly into R using
+    their open data site as GeoJSON data. 
 
-  5. Wind energy data estimated at the HUC12 level was read directly into R from the Environmental Protection Agency's EnviroAtlas data available online using the following URL: <https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv>. 
+5.  Wind energy data estimated at the HUC12 level was read directly into R from the Environmental Protection Agency's EnviroAtlas data
+    available online.
+    
+The following tables provide summary information on our data sets:
+
+| Dataset Information | Description|
+|:-------------------------------:|:--------------------------------:|
+|Data Description|US Cartographic Boundaries|
+|Data Source|U.S. Census Bureau|
+|Retrieved From| <https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.2021.html#list-tab-1883739534> |
+|   Variables Used    | State and County FIPS, County GNIS code, American FactFinder Geoid, Geoid, County Name, Geometry|
+
+|Dataset Information|Description|
+|:-----:|:-----:|
+|Data Description|HUC 12 Boundaries|
+|Data Source|Wyoming Water Development Office|
+|Retrieved From|<https://water.geospatialhub.org/datasets/687dadd8b93f4ad092b64a84caf5b72a_0/explore?location=42.808013%2C-107.387472%2C6.66>|
+|Variables Used|TNMID, Metasource, HUC 12, Name, Geometry|
+
+|Dataset Information|Description|
+|:-------:|:---------:|
+|Data Description|Social Vulnerability Index|
+|Data Source|US CDC Agency for Toxic Substances and Disease Registry|
+Retrieved From|<https://www.atsdr.cdc.gov/placeandhealth/svi/data_documentation_download.html>|
+|Variables Used|County, FIPS, Location, Estimated Total Population, Estimated Population in Poverty, Estimated Minority Population|
+
+|Dataset Information|Description|
+|:-------:|:---------:|
+|Data Description|Power Plants Present in Wyoming|
+|Data Source|Homeland Infrastructure Foundation-Level Data|
+|Retrieved From|<https://opendata.arcgis.com/datasets/ee0263bd105d41599be22d46107341c3_0.geojson>|
+|Variables Used|Type, Primary Fuel Type, Name, Location, Latitude, Longitude, Geometry|
+
+|Dataset Information|Description|
+|:-------:|:---------:|
+|Data Description|Wind Energy Potential|
+|Data Source|EPA EnviroAtlas|
+|Retrieved From|<https://raw.githubusercontent.com/ENV859/EnviroAtlasData/main/Wind_Energy.csv>|
+|Varibales Used|HUC 12, Average Wind Energy, kWh/km2/day|
 
 Our data wrangling included the following steps:
 
-  With our SVI spatial data, we began by selecting for the columns of interest (County, FIPS, location, total population, number of people living below the poverty line, and number of minorities). We then used the ‘left_join()’ function to combine the SVI data with the County Boundary data. Next, we generated a new column in this combined data frame using the 'mutate' function to calculate the percentage of people living in poverty in each county, by dividing the number of people in poverty in each county by the total population of that county. We then changed the county name column from a character vector to a factor to enable us to generate a bar plot of poverty percentage by county. However, our code to generate a bar plot continued to generate errors, so we chose to instead use a scatterplot to visualize poverty percentage by county.  
+With our SVI spatial data, we began by selecting for the columns of
+interest (County, FIPS, location, total population, number of people
+living below the poverty line, and number of minorities). We then used
+the 'left_join()' function to combine the SVI data with the County
+Boundary data. Next, we generated a new column in this combined data
+frame using the 'mutate' function to calculate the percentage of people
+living in poverty in each county, by dividing the number of people in
+poverty in each county by the total population of that county. We then
+changed the county name column from a character vector to a factor to
+enable us to generate a bar plot of poverty percentage by county.
+However, our code to generate a bar plot continued to generate errors,
+so we chose to instead use a scatterplot to visualize poverty percentage
+by county.
 
-  With our power plants spatial data, we began by filtering the data for power plants found in Wyoming. We then mapped this data with different colors to identify the different fuel types for each power plant. We overlayed these points on top of our SVI percentage data for the Wyoming counties, showing both a color gradient for percentage poverty and different colors for different power plant fuel types. The power plants data contained 13 different categories of fuel types, so we attempted to simplify our visualization by aggregating the power plants across major energy types (Fossil Fuel, Renewable, and Unknown). We attempted to use the ‘ifelse()’ function for this aggregation, but continually ran into errors; we think this may be because ‘ifelse()’ is only intended to create two groups, not three as we needed to.  
+With our power plants spatial data, we began by filtering the data for
+power plants found in Wyoming. We then mapped this data with different
+colors to identify the different fuel types for each power plant. We
+overlayed these points on top of our SVI percentage data for the Wyoming
+counties, showing both a color gradient for percentage poverty and
+different colors for different power plant fuel types. The power plants
+data contained 13 different categories of fuel types, so we attempted to
+simplify our visualization by aggregating the power plants across major
+energy types (Fossil Fuel, Renewable, and Unknown). We attempted to use
+the 'ifelse()' function for this aggregation, but continually ran into
+errors; we think this may be because 'ifelse()' is only intended to
+create two groups, not three as we needed to.
 
-  With our HUC12 spatial data, we used the ‘st_centroid()’ function on the geometry column of the data set to generate centroids for each HUC12 in Wyoming. Our County Boundary data was using a different CRS than our HUC12 data (NAD83 for counties, and WGS 84 for HUC12s), so we used the ‘st_transform()’ function to change the CRS of our HUC12 data to match the CRS of the County Boundary data, using the EPSG code for NAD83 (4269). We then used the ‘st_join()’ function to combine our Counties data and HUC12 Centroids data, and to tag each HUC12 centroid with the county in which it falls.  
+With our HUC12 spatial data, we used the 'st_centroid()' function on the
+geometry column of the data set to generate centroids for each HUC12 in
+Wyoming. Our County Boundary data was using a different CRS than our
+HUC12 data (NAD83 for counties, and WGS 84 for HUC12s), so we used the
+'st_transform()' function to change the CRS of our HUC12 data to match
+the CRS of the County Boundary data, using the EPSG code for NAD83
+(4269). We then used the 'st_join()' function to combine our Counties
+data and HUC12 Centroids data, and to tag each HUC12 centroid with the
+county in which it falls.
 
-  With our HUC12 centroids generated and tagged with their corresponding counties, we were then able to use our HUC12-level wind data for analysis at the county level. We used the ‘left_join()’ function to combine our raw HUC12-level wind data with our wrangled data assigning HUC12s to counties, allowing us to see wind energy by county. We then tidied this combined data frame to select what columns we needed (county name, HUC12, average wind energy, and geometry). We used this data to generate a boxplot, showing the range of wind energy available in each county (the range includes the different average wind energy numbers for each HUC12 within a given county).  
+With our HUC12 centroids generated and tagged with their corresponding
+counties, we were then able to use our HUC12-level wind data for
+analysis at the county level. We used the 'left_join()' function to
+combine our raw HUC12-level wind data with our wrangled data assigning
+HUC12s to counties, allowing us to see wind energy by county. We then
+tidied this combined data frame to select what columns we needed (county
+name, HUC12, average wind energy, and geometry). We used this data to
+generate a boxplot, showing the range of wind energy available in each
+county (the range includes the different average wind energy numbers for
+each HUC12 within a given county).
 
-  We then took an alternative approach to viewing wind energy availability, not as a range within a given county, but as an average for the whole county. We generated a new data frame in which we calculated the average wind energy for each county, and visualized this as a scatterplot to pair with our scatterplot of county-level poverty percentages. Similar to our poverty percentage data, we think a bar plot could have been a more effective visualization than a scatterplot, but ran into multiple errors when trying to generate a bar plot. 
-  
-The following table summarizes our data structure:
+We then took an alternative approach to viewing wind energy
+availability, not as a range within a given county, but as an average
+for the whole county. We generated a new data frame in which we
+calculated the average wind energy for each county, and visualized this
+as a scatterplot to pair with our scatterplot of county-level poverty
+percentages. Similar to our poverty percentage data, we think a bar plot
+could have been a more effective visualization than a scatterplot, but
+ran into multiple errors when trying to generate a bar plot.
 
-  
+
+
 
 ```{r svi data wrangling, include=FALSE}
 
@@ -123,7 +245,6 @@ svi2020_wy_processed <- svi2020_wy_raw %>%
 write.csv(svi2020_wy_processed, row.names = F, file = "./Data/Processed/svi2020_wy_processed.csv")
 
 ```
-
 
 ```{r join svi to county data, include=FALSE}
 
@@ -139,6 +260,7 @@ counties_sf_join <-
 
 #Change county name from a character vector to a factor
 counties_sf_join$NAME <- factor(counties_sf_join$NAME)
+
 
 ```
 
@@ -201,30 +323,30 @@ AvgWindByCounty <-
   drop_na(AvgWindEnergy) %>% 
   group_by(NAME) %>% 
   summarize(AvgWind = mean(AvgWindEnergy))
-#^currently generates warning message "although coordinates are longitude/latitude, st_union assumes that they are planar"
-
 
 ```
+
 \newpage
 
-# Exploratory Analysis 
-We used the ‘mapview()’ function to visualize the following:
-  1. Wyoming counties and the number of people in poverty in each county
+# Exploratory Analysis
+
+We used the 'mapview()' function to visualize the following: 1. Wyoming
+counties and the number of people in poverty in each county
 
 ```{r spatial visualization of counties by poverty rate, echo=FALSE, fig.cap="Figure 1: Wyoming Counties"}
 #View with mapview
 mapview(counties_sf_join, 
         zcol = 'E_POV150')
 ```
- 
-  2. Wyoming HUC12s
-  
+
+2.  Wyoming HUC12s
+
 ```{r spatial visualization of HUC 12 data, echo=FALSE, fig.cap="Figure 2: HUC 12 Watersheds of Wyoming"}
 #view HUC12 data with mapview
 mapview(HUC12)
 ```
 
-  3. The locations and fuel types of power plants in Wyoming
+3.  The locations and fuel types of power plants in Wyoming
 
 ```{r powerplant visualizations, echo=FALSE, fig.cap="Figure 3: Location and Type of Power Plants in Wyoming"}
  
@@ -233,7 +355,10 @@ mapview(wy_powerplants_sf,
         position='bottomleft')
 ```
 
-We additionally decided to explore the structure and contents of data frames as they were created, including our raw and processed SVI data.These can be seen in Figure 4. 
+We additionally decided to explore the structure and contents of data
+frames as they were created, including our raw and processed SVI
+data.These can be seen in Figure 4.
+
 ```{r structure SVI, echo=FALSE, fig.cap="Figure 4: Structure of Raw and Processed SVI Data Frames"}
 #check raw structure
 str(svi2020_wy_raw)
@@ -242,7 +367,9 @@ str(svi2020_wy_raw)
 str(svi2020_wy_processed)
 ```
 
-We additionally investigated the powerplants data before wrangling as seen in Figure 5. 
+We additionally investigated the powerplants data before wrangling as
+seen in Figure 5.
+
 ```{r powerplants explore, echo=FALSE, fig.cap="Figure 5: Exploration of Power Plants Data Frame"}
 #Reveal the field names
 colnames(powerplants_sf)
@@ -257,15 +384,26 @@ str(powerplants_sf)
 \newpage
 
 # Analysis
-Our analysis built on our initial research questions and initial hypothesis, which were as follows: 
-  Initial research questions:
-    1. What correlation was there between socially vulnerable communities and the presence of power plants?
-    2. What potential was there for renewable energy production in communities considered socially vulnerable? 
 
-  Initial hypothesis: 
-    Current areas of social vulnerability as judged by the CDC see higher rates of siting fossil fuel plants for electricity production. There is good potential to build on these overlapping conditions to make use of available wind energy resources for the transition to renewable energy as supported under the IRA.
-    
-We first generated a new column in our SVI dataframe to calculate the percentage of people in poverty in each Wyoming county, and visualized this using the 'mapview()' function to better see which counties were more impoverished relative to other counties (rather than viewing the number of people in poverty in each county as performed earlier, a visualization that was skewed by the differing populations of each county).
+Our analysis built on our initial research questions and initial
+hypothesis, which were as follows: Initial research questions: 1. What
+correlation was there between socially vulnerable communities and the
+presence of power plants? 2. What potential was there for renewable
+energy production in communities considered socially vulnerable?
+
+Initial hypothesis: Current areas of social vulnerability as judged by
+the CDC see higher rates of siting fossil fuel plants for electricity
+production. There is good potential to build on these overlapping
+conditions to make use of available wind energy resources for the
+transition to renewable energy as supported under the IRA.
+
+We first generated a new column in our SVI dataframe to calculate the
+percentage of people in poverty in each Wyoming county, and visualized
+this using the 'mapview()' function to better see which counties were
+more impoverished relative to other counties (rather than viewing the
+number of people in poverty in each county as performed earlier, a
+visualization that was skewed by the differing populations of each
+county).
 
 ```{r percent poverty by county, echo=FALSE, fig.cap="Figure 6: Percentage of Population Living in Poverty"}
 #View percentage poverty by county with mapview
@@ -273,7 +411,14 @@ mapview(counties_sf_join,
         zcol = 'PercentPov')
 ```
 
-We then used the 'mapview()' function to display a color gradient of poverty percentages within Wyoming counties on the same map as Wyoming power plants and their fuel types. The legend for power plant fuel types contains 13 types and so is quite large; we tried to simplify this into 3 major fuel types (Fossil Fuels, Renewables, and Unknown) using the 'ifelse()' function, but were unable to. By zooming out, we are able to view the whole map of Wyoming without being blocked by the legend of power plant fuel types.
+We then used the 'mapview()' function to display a color gradient of
+poverty percentages within Wyoming counties on the same map as Wyoming
+power plants and their fuel types. The legend for power plant fuel types
+contains 13 types and so is quite large; we tried to simplify this into
+3 major fuel types (Fossil Fuels, Renewables, and Unknown) using the
+'ifelse()' function, but were unable to. By zooming out, we are able to
+view the whole map of Wyoming without being blocked by the legend of
+power plant fuel types.
 
 ```{r visualization of svi with powerplants, echo=FALSE, fig.cap="Figure 7: Visualization of Power Plant Locations and Population in Poverty By County"}
 #map counties, svi, powerplants
@@ -284,16 +429,21 @@ mapview(counties_sf_join,
           position = "bottomleft")
 ```
 
-We calculated the centroids of our HUC12s to assign them to Wyoming counties, and then used the 'mapview()' function to visualize these HUC12 centroids across the state. 
+We calculated the centroids of our HUC12s to assign them to Wyoming
+counties, and then used the 'mapview()' function to visualize these
+HUC12 centroids across the state.
 
 ```{r map of HUC12 by county, echo=FALSE, fig.cap="Figure 8: HUC 12 Watersheds Matched to Counties"}
 #map newly created dataframe of HUC12Counties
 mapview(HUC12Counties)
 ```
 
-Once we had assigned the HUC12s to Wyoming counties, we were able to then match up our HUC12-level wind energy data with different counties. 
+Once we had assigned the HUC12s to Wyoming counties, we were able to
+then match up our HUC12-level wind energy data with different counties.
 
-We first visualized the range of wind energy within each county by looking at the wind energy for different HUC12s within each county as a box and whisker plot.
+We first visualized the range of wind energy within each county by
+looking at the wind energy for different HUC12s within each county as a
+box and whisker plot as shown in Figure 9.
 
 ```{r visualize the range of HUC12 wind energy within each county using a box and whisker plot, echo=FALSE, fig.cap="Figure 9: Wind Energy Potential by County"}
 #view new tidied data as a boxplot
@@ -308,7 +458,11 @@ PlotWindByCounty <-
 print(PlotWindByCounty)
 ```
 
-We then developed a scatter plot to more succinctly visualize the average wind energy for each county. We think a bar plot might have enabled a clearer visualization of these average wind energy calculations, but this continually generated errors that we were unable to troubleshoot, so we chose to instead use a scatter plot.
+We then developed a scatter plot to more succinctly visualize the
+average wind energy for each county. We think a bar plot might have
+enabled a clearer visualization of these average wind energy
+calculations, but this continually generated errors that we were unable
+to troubleshoot, so we chose to instead use a scatter plot as shown in Figure 10.
 
 ```{r visualize average wind by county as scatter plot, echo=FALSE, fig.cap="Figure 10: Average Wind Energy Potential by County"}
 #View new AvgWindByCounty data as a scatterplot
@@ -323,11 +477,28 @@ PlotAvgWindByCounty <-
 print(PlotAvgWindByCounty)
 ```
 
-To visualize county poverty levels in a similar, translatable format with county average wind energy levels, we then developed a scatter plot of poverty percentages at the county level. As with wind energy, we thought a bar plot might be a more ideal visualization, but ran into errors and insurmountable challenges with troubleshooting, so reverted to a scatter plot as our most practical option. 
+To visualize county poverty levels in a similar, translatable format
+with county average wind energy levels, we then developed a scatter plot
+of poverty percentages at the county level. As with wind energy, we
+thought a bar plot might be a more ideal visualization, but ran into
+errors and insurmountable challenges with troubleshooting, so reverted
+to a scatter plot as our most practical option.
 
-We initially envisioned combining wind energy and poverty levels on a single map using the 'mapview()' function, but later determined that such a multi-level map would be more confusing than helpful for visualizing patterns in our data. 
+We initially envisioned combining wind energy and poverty levels on a
+single map using the 'mapview()' function, but later determined that
+such a multi-level map would be more confusing than helpful for
+visualizing patterns in our data.
 
-We additionally envisioned using the 'facet_grid' function to display both scatterplots together, but when using the 'left_join' function to add average wind energy to our data frame including poverty information found that the new data frame inexplicably generated multiple average wind speeds for each county. These were listed under the correct wind speed as (for example) rows 1.1, 1.2, etc. We attempted to wrangle the new data frame to only include the correct wind speeds in rows 1, 2, 3, etc but could not separate them out. We decided that, for all practical purposes, the two scatterplots could still be shown one above the other even without the use of the 'facet_grid' function.
+We additionally envisioned using the 'facet_grid' function to display
+both scatterplots together, but when using the 'left_join' function to
+add average wind energy to our data frame including poverty information
+found that the new data frame inexplicably generated multiple average
+wind speeds for each county. These were listed under the correct wind
+speed as (for example) rows 1.1, 1.2, etc. We attempted to wrangle the
+new data frame to only include the correct wind speeds in rows 1, 2, 3,
+etc but could not separate them out. We decided that, for all practical
+purposes, the two scatterplots could still be shown one above the other
+even without the use of the 'facet_grid' function.
 
 ```{r scatterplot visualization poverty by county, echo=FALSE, fig.cap="Figure 11: Percentage of Population in Poverty by County"}
 #View percentage poverty by county as a scatterplot
@@ -342,32 +513,166 @@ PlotSVICountyPercent <-
 print(PlotSVICountyPercent)
 ```
 
-## Question 1:  What correlation is there between socially vulnerable communities and the presence of power plants?
-Niobrara County, which has the highest poverty rate among Wyoming counties at 32%, has no power plants. This may be because the county’s population is only 2,377 people, so it may not have enough electricity demand to generate its own electricity and instead draws electricity from neighboring counties. 
+## Question 1: What correlation is there between socially vulnerable communities and the presence of power plants?
 
-Other counties with high social vulnerability include Albany County (27%), Hot Springs County (25%), Johnson County (24%), and Fremont County (23%). Of these, Hot Springs County and Johnson County likewise have no power plants. Hot Springs County’s population is 4,550 and Johnson County’s population is 8,518, so this may again be a function of low population and limited demand for localized electricity production. Albany County and Fremont County have much larger populations (38,664 and 39,711 respectively), and are home to multiple power plants: in Albany County, 4 wind farms, and 2 plants of unknown energy source, and in Fremont County, 2 hydroelectric plants, 1 natural gas plant, and 1 plant of unknown energy source.  
+Niobrara County, which has the highest poverty rate among Wyoming
+counties at 32%, has no power plants. This may be because the county's
+population is only 2,377 people, so it may not have enough electricity
+demand to generate its own electricity and instead draws electricity
+from neighboring counties.
 
-Based on these findings, it seems that the most socially vulnerable communities in Wyoming may also be particularly rural counties with low populations, which may have small economies with few opportunities for household income generation. These counties currently have no power plants; they seem to be impractical places for siting power plants to support other counties based on the distance needed for transmission, and may have limited demand for localized renewable energy generation in the future. For socially vulnerable counties in Wyoming that also have more sizable populations, renewable energy seems to already be an important component of local electricity generation through hydro and wind power, and there may be good potential to transition any remaining fossil fuel power plants to renewable energy in the future. This is particularly true for Albany County, which has the highest average wind energy per square kilometer among Wyoming counties.  
+Other counties with high social vulnerability include Albany County
+(27%), Hot Springs County (25%), Johnson County (24%), and Fremont
+County (23%). Of these, Hot Springs County and Johnson County likewise
+have no power plants. Hot Springs County's population is 4,550 and
+Johnson County's population is 8,518, so this may again be a function of
+low population and limited demand for localized electricity production.
+Albany County and Fremont County have much larger populations (38,664
+and 39,711 respectively), and are home to multiple power plants: in
+Albany County, 4 wind farms, and 2 plants of unknown energy source, and
+in Fremont County, 2 hydroelectric plants, 1 natural gas plant, and 1
+plant of unknown energy source.
 
-## Question 2: What potential is there for renewable energy production in communities considered socially vulnerable? 
-In our visualization of county-level wind energy potential and county-level poverty rates, two counties that stood out as having high levels of both were Albany County and Carbon County. We also found that Albany County and Carbon County currently have more wind energy generation than most other Wyoming counties.  
+Based on these findings, it seems that the most socially vulnerable
+communities in Wyoming may also be particularly rural counties with low
+populations, which may have small economies with few opportunities for
+household income generation. These counties currently have no power
+plants; they seem to be impractical places for siting power plants to
+support other counties based on the distance needed for transmission,
+and may have limited demand for localized renewable energy generation in
+the future. For socially vulnerable counties in Wyoming that also have
+more sizable populations, renewable energy seems to already be an
+important component of local electricity generation through hydro and
+wind power, and there may be good potential to transition any remaining
+fossil fuel power plants to renewable energy in the future. This is
+particularly true for Albany County, which has the highest average wind
+energy per square kilometer among Wyoming counties.
 
-Based on the data we currently have, this could be interpreted to mean that there is strong potential for socially vulnerable communities to transition away from fossil fuel-based electricity generation towards renewable energy generation. The type of renewable energy the county is able to transition to may then further depend on what renewable energy resources are most abundant locally; Albany County and Carbon County both have more wind energy than most other Wyoming counties.  
+## Question 2: What potential is there for renewable energy production in communities considered socially vulnerable?
 
-If communities are socially vulnerable and do not have good renewable energy potential (wind, solar, hydro, geothermal, etc.) locally available, they may encounter greater difficulty in transitioning away from fossil fuel-based electricity generation. As an alternative, they may be able to draw on transmission of renewable energy generation from other locations. The IRA’s support of renewable energy generation through tax credits will likely lower the costs of renewable energy generation in the coming years, and may ultimately make transmission of renewable energy from other locations a cheaper option than burning fossil fuels for local energy generation.  
+In our visualization of county-level wind energy potential and
+county-level poverty rates, two counties that stood out as having high
+levels of both were Albany County and Carbon County. We also found that
+Albany County and Carbon County currently have more wind energy
+generation than most other Wyoming counties.
 
+Based on the data we currently have, this could be interpreted to mean
+that there is strong potential for socially vulnerable communities to
+transition away from fossil fuel-based electricity generation towards
+renewable energy generation. The type of renewable energy the county is
+able to transition to may then further depend on what renewable energy
+resources are most abundant locally; Albany County and Carbon County
+both have more wind energy than most other Wyoming counties.
 
+If communities are socially vulnerable and do not have good renewable
+energy potential (wind, solar, hydro, geothermal, etc.) locally
+available, they may encounter greater difficulty in transitioning away
+from fossil fuel-based electricity generation. As an alternative, they
+may be able to draw on transmission of renewable energy generation from
+other locations. The IRA's support of renewable energy generation
+through tax credits will likely lower the costs of renewable energy
+generation in the coming years, and may ultimately make transmission of
+renewable energy from other locations a cheaper option than burning
+fossil fuels for local energy generation.
 
 \newpage
 
 # Summary and Conclusions
-Looking at the scatter plots, we find several counties that have relatively higher rates of residents living in poverty along with relatively high wind energy potential. They include Albany County, Carbon County, and Niobrara County. Albany County stands out as the county with both higher rates of poverty and higher wind energy potential. 
 
-While Albany County already has some wind energy generation, it could be primed to expand. Albany County is home to the sixth largest population by county in the state, and the fourth largest city in Laramie, which is also home to the University of Wyoming. Casper, the second largest city in the state, is located catty-corner to Albany County to its northwest. Cheyenne, the most populous city in the state and capitol city, is located in Laramie County and neighbors Albany County directly to the east. Wind energy generated in Albany County could easily provide power to these population centers.  
+Looking at the scatter plots, we find several counties that have
+relatively higher rates of residents living in poverty along with
+relatively high wind energy potential. They include Albany County,
+Carbon County, and Niobrara County. Albany County stands out as the
+county with both higher rates of poverty and higher wind energy
+potential.
+
+While Albany County already has some wind energy generation, it could be
+primed to expand. Albany County is home to the sixth largest population
+by county in the state, and the fourth largest city in Laramie, which is
+also home to the University of Wyoming. Casper, the second largest city
+in the state, is located catty-corner to Albany County to its northwest.
+Cheyenne, the most populous city in the state and capitol city, is
+located in Laramie County and neighbors Albany County directly to the
+east. Wind energy generated in Albany County could easily provide power
+to these population centers.
 
 \newpage
 
 # References
-The Inflation Reduction Act (2023). United States Environmental Protection Agency. https://www.epa.gov/green-power-markets/inflation-reduction-act 
+
+The Inflation Reduction Act (2023). United States Environmental
+Protection Agency.
+<https://www.epa.gov/green-power-markets/inflation-reduction-act>
+
+```{r, echo=FALSE,fig.pos='H'}
+#electric summary variables
+mean.elec<-round(mean(nc_electricity.df$price_per_kWh,na.rm = TRUE),2)
+
+length.elec<-length(nc_electricity.df$price_per_kWh)
+
+sd.elec<-round(sd(nc_electricity.df$price_per_kWh,na.rm = TRUE),2)
+
+median.elec<-round(median(nc_electricity.df$price_per_kWh,na.rm = TRUE),2)
+
+min.elec<-min(nc_electricity.df$price_per_kWh,na.rm = TRUE)
+
+max.elec<-max(nc_electricity.df$price_per_kWh,na.rm = TRUE)
 
 
+#create summary DF for electricity
+summary_elec<- cbind(length.elec, min.elec, max.elec, mean.elec, sd.elec, median.elec
+                  ) %>% 
+  as.data.frame()
+
+# rename columns
+colnames(summary_elec) <- c("Observations",
+                          "Min",
+                          "Max",
+                          "Mean Price",
+                         "Std. Dev.", 
+                         "Median Price"
+                            )
+
+#gas summary variables
+mean.gas<-round(mean(natural_gas.df$price,na.rm = TRUE),2)
+
+length.gas<-length(natural_gas.df$price)
+
+sd.gas<-round(sd(natural_gas.df$price,na.rm = TRUE),2)
+
+median.gas<-round(median(natural_gas.df$price,na.rm = TRUE),2)
+
+min.gas<-min(natural_gas.df$price,na.rm = TRUE)
+
+max.gas<-max(natural_gas.df$price,na.rm = TRUE)
+
+# create summary DF for gas
+summary_gas<- cbind(length.gas, min.gas, max.gas, mean.gas, sd.gas, median.gas
+                  ) %>% 
+  as.data.frame()
+
+# rename columns
+colnames(summary_gas) <- c("Observations",
+                          "Min",
+                          "Max",
+                          "Mean Price",
+                         "Std. Dev.", 
+                         "Median Price")
+
+summary_data<-rbind(summary_gas, summary_elec)
+
+summary_data$Variable<-c("Natural Gas ($/Mcf)","Electricity(cents/kWh)")
+
+summary_data<-summary_data[,c(7,1,2,3,4,5,6)]
+
+```
+
+```{r Data Summary Table, echo=FALSE}
+# generate a visualized table to use in the report
+kbl(summary_data,
+    caption = "Summary Statistics",
+    digits = array(5, ncol(summary_data))) %>% 
+  kable_styling(full_width = FALSE, position = "center", 
+                latex_options = "HOLD_position") %>% 
+  kable_styling(latex_options = "striped")
+```
