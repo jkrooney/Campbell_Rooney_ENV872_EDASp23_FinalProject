@@ -127,9 +127,10 @@ ggplot(wy_powerplants_sf) +
 
 #map counties, svi, powerplants
 mapview(counties_sf_join, 
-        zcol = 'E_POV150') +
+        zcol = 'PercentPov') +
   mapview(wy_powerplants_sf,
-          zcol = 'TYPE')
+          zcol = 'TYPE',
+          position = 'bottomleft')
 
 #aggregate power plants by energy type for simpler visualization
 wy_powerplants_sf <- 
