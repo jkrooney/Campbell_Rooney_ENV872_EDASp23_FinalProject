@@ -86,7 +86,7 @@ knew that Wyoming has relatively abundant wind energy potential, and
 that data existed that would help us understand and quantify wind energy
 potential throughout the state.
 
-This led us to two research questions: 
+This led us to two research questions:\ 
   1. What relationship is there between socially vulnerable communities and the presence of power plants?
   2. What potential is there for renewable energy production in communities considered socially vulnerable?
 
@@ -431,7 +431,7 @@ We first visualized the range of wind energy within each county by
 looking at the wind energy for different HUC12s within each county as a
 box and whisker plot as shown in Figure 1.
 
-```{r visualize the range of HUC12 wind energy within each county using a box and whisker plot, echo=FALSE, fig.cap="Figure 1: Wind Energy Potential by County"}
+```{r visualize the range of HUC12 wind energy within each county using a box and whisker plot, echo=FALSE, warning=FALSE, fig.cap="Figure 1: Wind Energy Potential by County"}
 #view new tidied data as a boxplot
 PlotWindByCounty <- 
   ggplot(TidyHUC12CountiesWind,
