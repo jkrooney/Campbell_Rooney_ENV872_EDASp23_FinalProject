@@ -67,16 +67,6 @@ wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/m
   colClasses = c('HUC_12' = 'factor'))
 ```
 
--   Knitting commands in code chunks:
-    -   `include = FALSE` - code is run, but neither code nor results
-        appear in knitted file
-    -   `echo = FALSE` - code not included in knitted file, but results
-        are
-    -   `eval = FALSE` - code is not run in the knitted file
-    -   `message = FALSE` - messages do not appear in knitted file
-    -   `warning = FALSE` - warnings do not appear...
-    -   `fig.cap = "..."` - adds a caption to graphical results
-
 # Rationale and Research Questions
 
 The Inflation Reduction Act (IRA) was passed by the US Congress in late
