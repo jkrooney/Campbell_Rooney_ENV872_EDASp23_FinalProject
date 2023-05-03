@@ -356,7 +356,9 @@ If communities are socially vulnerable and do not have good renewable energy pot
 \newpage
 
 # Summary and Conclusions
-Looking at the scatter plots, we find several counties that have relatively higher rates of residents living in poverty along with relatively high wind energy potential. They include Albany County, Carbon County, and Niobrara County. Albany County stands out as the county with both higher rates of poverty and higher wind energy potential. Albany County is home to the sixth largest population by county in the state, and the fourth largest city in Laramie, which is also home to the University of Wyoming. best situated to take advantage of provisions in the IRA that offer funding for those locales experiencing high poverty rates and  
+Looking at the scatter plots, we find several counties that have relatively higher rates of residents living in poverty along with relatively high wind energy potential. They include Albany County, Carbon County, and Niobrara County. Albany County stands out as the county with both higher rates of poverty and higher wind energy potential. 
+
+While Albany County already has some wind energy generation, it could be primed to expand. Albany County is home to the sixth largest population by county in the state, and the fourth largest city in Laramie, which is also home to the University of Wyoming. Casper, the second largest city in the state, is located catty-corner to Albany County to its northwest. Cheyenne, the most populous city in the state and capitol city, is located in Laramie County and neighbors Albany County directly to the east. Wind energy generated in Albany County could easily provide power to these population centers.  
 
 \newpage
 
