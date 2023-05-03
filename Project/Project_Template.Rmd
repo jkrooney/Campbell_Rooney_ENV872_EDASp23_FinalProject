@@ -99,7 +99,7 @@ We worked with the following 5 datasets:
 
 Our data wrangling included the following steps:
 
-  With our SVI spatial data, we began by selecting for the columns of interest (County, FIPS, location, total population, number of people living below the poverty line, and number of minorities). We then used the ‘left_join()’ function to combine the SVI data with the County Boundary data. Next, we generated a new column in this combined data frame to calculate the percentage of people living in poverty in each county, by dividing the number of people in poverty in each county by the total population of that county. We then changed the county name column from a character vector to a factor to enable us to generate a bar plot of poverty percentage by county. However, our code to generate a bar plot continued to generate errors, so we chose to instead use a scatterplot to visualize poverty percentage by county.  
+  With our SVI spatial data, we began by selecting for the columns of interest (County, FIPS, location, total population, number of people living below the poverty line, and number of minorities). We then used the ‘left_join()’ function to combine the SVI data with the County Boundary data. Next, we generated a new column in this combined data frame using the 'mutate' function to calculate the percentage of people living in poverty in each county, by dividing the number of people in poverty in each county by the total population of that county. We then changed the county name column from a character vector to a factor to enable us to generate a bar plot of poverty percentage by county. However, our code to generate a bar plot continued to generate errors, so we chose to instead use a scatterplot to visualize poverty percentage by county.  
 
   With our power plants spatial data, we began by filtering the data for power plants found in Wyoming. We then mapped this data with different colors to identify the different fuel types for each power plant. We overlayed these points on top of our SVI percentage data for the Wyoming counties, showing both a color gradient for percentage poverty and different colors for different power plant fuel types. The power plants data contained 13 different categories of fuel types, so we attempted to simplify our visualization by aggregating the power plants across major energy types (Fossil Fuel, Renewable, and Unknown). We attempted to use the ‘ifelse()’ function for this aggregation, but continually ran into errors; we think this may be because ‘ifelse()’ is only intended to create two groups, not three as we needed to.  
 
@@ -114,8 +114,6 @@ The following table summarizes our data structure:
   
 
 ```{r svi data wrangling, include=FALSE}
-#check raw structure
-str(svi2020_wy_raw)
 
 #select needed columns
 svi2020_wy_processed <- svi2020_wy_raw %>%
@@ -123,9 +121,6 @@ svi2020_wy_processed <- svi2020_wy_raw %>%
 
 #save processed file
 write.csv(svi2020_wy_processed, row.names = F, file = "./Data/Processed/svi2020_wy_processed.csv")
-
-#Check structure
-str(svi2020_wy_processed)
 
 ```
 
@@ -148,11 +143,6 @@ counties_sf_join$NAME <- factor(counties_sf_join$NAME)
 ```
 
 ```{r powerplant wrangling, include=FALSE}
-#Reveal the field names
-colnames(powerplants_sf)
-
-#How many records
-nrow(powerplants_sf)
 
 #Filter for just powerplants found in WY
 wy_powerplants_sf <- powerplants_sf %>% 
@@ -236,17 +226,31 @@ mapview(HUC12)
 
   3. The locations and fuel types of power plants in Wyoming
 
-```{r powerplant visualizations, include=FALSE}
-#View on a map - specify the geometry column to draw faster
-plot(powerplants_sf$geometry)
+```{r powerplant visualizations, echo=FALSE}
+ 
+mapview(wy_powerplants_sf,
+        zcol = 'TYPE')
+```
 
-# Examine counts by prim fuel type
-ggplot(wy_powerplants_sf) + 
-  geom_sf(aes(color = PRIM_FUEL)) 
+We additionally decided to explore the structure and contents of data frames as they were created, including our raw and processed SVI data. 
+```{r structure SVI, echo=FALSE}
+#check raw structure
+str(svi2020_wy_raw)
 
-#counts by type
-ggplot(wy_powerplants_sf) + 
-  geom_sf(aes(color = TYPE)) 
+#Check processed structure
+str(svi2020_wy_processed)
+```
+
+We additionally investigated the powerplants data before wrangling. 
+```{r powerplants explore, echo=FALSE}
+#Reveal the field names
+colnames(powerplants_sf)
+
+#How many records
+nrow(powerplants_sf)
+
+#structure of df
+str(powerplants_sf)
 ```
 
 \newpage
@@ -280,7 +284,7 @@ mapview(counties_sf_join,
 
 We calculated the centroids of our HUC12s to assign them to Wyoming counties, and then used the 'mapview()' function to visualize these HUC12 centroids across the state. 
 
-```{r map of HUC12 by county, include=FALSE}
+```{r map of HUC12 by county, echo=FALSE}
 #map newly created dataframe of HUC12Counties
 mapview(HUC12Counties)
 ```
@@ -321,6 +325,8 @@ To visualize county poverty levels in a similar, translatable format with county
 
 We initially envisioned combining wind energy and poverty levels on a single map using the 'mapview()' function, but later determined that such a multi-level map would be more confusing than helpful for visualizing patterns in our data. 
 
+We additionally envisioned using the 'facet_grid' function to display both scatterplots together, but when using the 'left_join' function to add average wind energy to our data frame including poverty information found that the new data frame inexplicably generated multiple average wind speeds for each county. These were listed under the correct wind speed as (for example) rows 1.1, 1.2, etc. We attempted to wrangle the new data frame to only include the correct wind speeds in rows 1, 2, 3, etc but could not separate them out. We decided that, for all practical purposes, the two scatterplots could still be shown one above the other even without the use of the 'facet_grid' function.
+
 ```{r scatterplot visualization poverty by county, echo=FALSE}
 #View percentage poverty by county as a scatterplot
 PlotSVICountyPercent <- 
@@ -334,9 +340,9 @@ PlotSVICountyPercent <-
 print(PlotSVICountyPercent)
 ```
 
-## Question 1:  What correlation was there between socially vulnerable communities and the presence of power plants?
+## Question 1:  What correlation is there between socially vulnerable communities and the presence of power plants?
 
-## Question 2: What potential was there for renewable energy production in communities considered socially vulnerable? 
+## Question 2: What potential is there for renewable energy production in communities considered socially vulnerable? 
 
 
 
