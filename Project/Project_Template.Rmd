@@ -229,7 +229,8 @@ mapview(HUC12)
 ```{r powerplant visualizations, echo=FALSE}
  
 mapview(wy_powerplants_sf,
-        zcol = 'TYPE')
+        zcol = 'TYPE', 
+        position='bottomleft')
 ```
 
 We additionally decided to explore the structure and contents of data frames as they were created, including our raw and processed SVI data. 
@@ -279,7 +280,8 @@ We then used the 'mapview()' function to display a color gradient of poverty per
 mapview(counties_sf_join, 
         zcol = 'PercentPov') +
   mapview(wy_powerplants_sf,
-          zcol = 'TYPE')
+          zcol = 'TYPE', 
+          position = "bottomleft")
 ```
 
 We calculated the centroids of our HUC12s to assign them to Wyoming counties, and then used the 'mapview()' function to visualize these HUC12 centroids across the state. 
@@ -343,14 +345,18 @@ print(PlotSVICountyPercent)
 ## Question 1:  What correlation is there between socially vulnerable communities and the presence of power plants?
 
 ## Question 2: What potential is there for renewable energy production in communities considered socially vulnerable? 
+In our visualization of county-level wind energy potential and county-level poverty rates, two counties that stood out as having high levels of both were Albany County and Carbon County. We also found that Albany County and Carbon County currently have more wind energy generation than most other Wyoming counties.  
 
+Based on the data we currently have, this could be interpreted to mean that there is strong potential for socially vulnerable communities to transition away from fossil fuel-based electricity generation towards renewable energy generation. The type of renewable energy the county is able to transition to may then further depend on what renewable energy resources are most abundant locally; Albany County and Carbon County both have more wind energy than most other Wyoming counties.  
+
+If communities are socially vulnerable and do not have good renewable energy potential (wind, solar, hydro, geothermal, etc.) locally available, they may encounter greater difficulty in transitioning away from fossil fuel-based electricity generation. As an alternative, they may be able to draw on transmission of renewable energy generation from other locations. The IRA’s support of renewable energy generation through tax credits will likely lower the costs of renewable energy generation in the coming years, and may ultimately make transmission of renewable energy from other locations a cheaper option than burning fossil fuels for local energy generation.  
 
 
 
 \newpage
 
 # Summary and Conclusions
-
+Looking at the scatter plots, we find several counties that have relatively higher rates of residents living in poverty along with relatively high wind energy potential. They include Albany County, Carbon County, and Niobrara County. Albany County stands out as the county with both higher rates of poverty and higher wind energy potential. Albany County is home to the sixth largest population by county in the state, and the fourth largest city in Laramie, which is also home to the University of Wyoming. best situated to take advantage of provisions in the IRA that offer funding for those locales experiencing high poverty rates and  
 
 \newpage
 
